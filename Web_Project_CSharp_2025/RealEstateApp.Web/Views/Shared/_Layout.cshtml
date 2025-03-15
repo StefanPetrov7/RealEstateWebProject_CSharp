@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using static RealEstateApp.Common.AppConstants;
+
+@{
+    int currentYear = DateTime.UtcNow.Year;
+    string footerNote = AppReleaseYear == currentYear ? $"{AppReleaseYear}" : $"{AppReleaseYear} | {currentYear}";
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -36,7 +43,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - RealEstate App
+            &copy; @footerNote   - RealEstate App
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

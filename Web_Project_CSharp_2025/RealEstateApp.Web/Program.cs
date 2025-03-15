@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using RealEstateApp.Web.Data;
+using RealEstateApp.Data;
+using RealEstateApp.Data.DataServices;
+using RealEstateApp.Data.DataServices.Contracts;
 
 namespace RealEstateApp.Web
 {
@@ -12,13 +14,18 @@ namespace RealEstateApp.Web
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<SeedService>();
+            builder.Services.AddScoped<IPropertyService, PropertyService>();
 
             WebApplication app = builder.Build();
 
@@ -40,6 +47,12 @@ namespace RealEstateApp.Web
             app.UseRouting();
 
             app.UseAuthorization();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var seedServices = scope.ServiceProvider.GetRequiredService<SeedService>();
+                seedServices.RunSeed();
+            }
 
             app.MapControllerRoute(
                 name: "default",
