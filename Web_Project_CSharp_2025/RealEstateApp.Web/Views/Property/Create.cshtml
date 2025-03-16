@@ -1,0 +1,58 @@
+﻿@using RealEstateApp.Web.ViewModels.Property;
+@model PropertyAddFormInputModel;
+
+<h2>Add a New Property</h2>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label asp-for="PropertyType">Property Type</label>
+        <input asp-for="PropertyType" class="form-control" />
+        <span asp-validation-for="PropertyType" class="text-danger"></span>
+    </div>
+    <div>
+        <label for="BuildingType">Building Type</label>
+        <input asp-for="BuildingType" class="form-control" />
+        <span asp-validation-for="BuildingType" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Price">Price</label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Size">Size M2</label>
+        <input asp-for="Size" class="form-control" />
+        <span asp-validation-for="Size" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Floor">Floor</label>
+        <input asp-for="Floor" class="form-control" />
+        <span asp-validation-for="Floor" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="District">District</label>
+        <input asp-for="District" class="form-control" />
+        <span asp-validation-for="District" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Year">Year</label>
+        <input asp-for="Year" class="form-control" />
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="YardSize">Yard Size M2</label>
+        <input asp-for="YardSize" class="form-control" />
+        <span asp-validation-for="YardSize" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="TotalFloors">Total Floors</label>
+        <input asp-for="TotalFloors" class="form-control" />
+        <span asp-validation-for="TotalFloors" class="text-danger"></span>
+    </div>
+
+ 
+    <button type="submit" class="btn btn-primary mt-2">Create Property</button>
+</form>
+
+<a asp-action="Index">Back to Property List</a>
+

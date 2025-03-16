@@ -18,12 +18,13 @@ namespace RealEstateApp.Data.DataServices
             return this.dbContext.Properties.Any(); 
         }
 
-        public void AddProperty(string district, int floor, int totalFloor, int size, int yardSize, int year, string propertyType, string buildingType, int price)
+        public void AddProperty(string district, int floor, int totalFloor, int size, int? yardSize, int? year, string propertyType, string buildingType, int? price)
         {
 
             var property = new Property
             {
-                Id = Guid.NewGuid(),
+                // >> Property ctor is initializing the Id by default. 
+                // Id = Guid.NewGuid(), 
                 Size = size,
                 Price = price <= 0 ? null : price,
                 Floor = floor <= 0 || floor >= 255 ? null : (byte)floor,

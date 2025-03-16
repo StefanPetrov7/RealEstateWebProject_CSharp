@@ -1,0 +1,20 @@
+﻿@using RealEstateApp.Web.ViewModels.Property;
+@model PropertyViewModel;
+
+<h2>@Model.Name</h2>
+
+<p><strong>Property Type:</strong> @Model.Name</p>
+<p><strong>Release Date:</strong> @Model.DateAdded.ToString("MMMM yyyy")</p>
+<p><strong>Building Type:</strong> @Model.BuildingType</p>
+<p><strong>District</strong> @Model.DistrictName</p>
+<p><strong>Property Size M2</strong> @Model.Size</p>
+<p><strong>Property Yard Size M2</strong> @Model.YardSize</p>
+<p><strong>Floor</strong> @Model.Floor</p>
+<p><strong>Total Floors</strong> @Model.TotalFloors</p>
+<p><strong>Price - Euro</strong> @Model.Price</p>
+<p><strong>Year</strong> @Model.Year</p>
+
+
+<a asp-action="Index" class="btn btn-primary">Back to All Movies</a>
+
+

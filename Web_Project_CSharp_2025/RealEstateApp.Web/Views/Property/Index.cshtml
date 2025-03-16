@@ -1,0 +1,43 @@
+﻿@using RealEstateApp.Web.ViewModels.Property;
+@model IEnumerable<PropertyViewModel>;
+
+<h2>All Properties</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Property Type</th>
+            <th>Building Type</th>
+            <th>Location</th>
+            <th>Size</th>
+            <th>Floor</th>
+            <th>Year</th>
+            <th>Price - Euro</th>
+            <th>Date Added</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (PropertyViewModel property in this.Model)
+        {
+            string floor = property.Floor == null ? "N/A" : property.Floor.ToString()!;
+            string year = property.Year == null ? "N/A" : property.Year.ToString()!;
+
+            <tr>
+                <td>@property.Name</td>
+                <td>@property.BuildingType</td>
+                <td>@property.DistrictName</td>
+                <td>@property.Size</td>
+                <td>@floor</td>
+                <td>@year</td>
+                <td>@property.Price</td>
+                <td>@property.DateAdded.ToString("MMMM yyyy")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@property.Id" class="btn btn-info">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create" class="btn btn-primary">Add New Property</a>

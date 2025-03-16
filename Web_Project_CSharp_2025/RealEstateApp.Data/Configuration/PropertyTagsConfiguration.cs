@@ -14,11 +14,13 @@ namespace RealEstateApp.Data.Configuration
 
             builder.HasOne(x => x.Property)
                 .WithMany(x => x.PropertyTags)
-                .IsRequired(true);
+                .IsRequired(true)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Tag)
              .WithMany(x => x.TagProperties)
-             .IsRequired(true);
+             .IsRequired(true)
+             .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

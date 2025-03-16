@@ -16,7 +16,9 @@ namespace RealEstateApp.Web
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            {
+                options.UseSqlServer(connectionString);
+            });
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -24,8 +26,9 @@ namespace RealEstateApp.Web
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddScoped<SeedService>();
+            builder.Services.AddScoped<ISeedService, SeedService>();
             builder.Services.AddScoped<IPropertyService, PropertyService>();
+            builder.Services.AddScoped<ITagService, TagService>();
 
             WebApplication app = builder.Build();
 
@@ -50,7 +53,7 @@ namespace RealEstateApp.Web
 
             using (var scope = app.Services.CreateScope())
             {
-                var seedServices = scope.ServiceProvider.GetRequiredService<SeedService>();
+                var seedServices = scope.ServiceProvider.GetRequiredService<ISeedService>();
                 seedServices.RunSeed();
             }
 
