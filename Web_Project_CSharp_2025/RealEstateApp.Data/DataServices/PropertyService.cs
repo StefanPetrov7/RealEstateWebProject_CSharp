@@ -1,4 +1,5 @@
-﻿using RealEstateApp.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using RealEstateApp.Data;
 using RealEstateApp.Data.DataServices.Contracts;
 using RealEstateApp.Data.ImportModels;
 using RealEstateApp.Data.Models;
@@ -13,12 +14,12 @@ namespace RealEstateApp.Data.DataServices
             this.dbContext = dbContext;
         }
 
-        public bool HasPropertyBeenAdded() 
+        public async Task<bool> HasPropertyBeenAdded() 
         {
-            return this.dbContext.Properties.Any(); 
+            return await this.dbContext.Properties.AnyAsync(); 
         }
 
-        public void AddProperty(string district, int floor, int totalFloor, int size, int? yardSize, int? year, string propertyType, string buildingType, int? price)
+        public async Task AddProperty(string district, int floor, int totalFloor, int size, int? yardSize, int? year, string propertyType, string buildingType, int? price)
         {
 
             var property = new Property
@@ -34,7 +35,7 @@ namespace RealEstateApp.Data.DataServices
                 DateAdded = DateTime.Now,
             };
 
-            var dbDistrict = dbContext.Districts.FirstOrDefault(x => x.Name == district);
+            var dbDistrict = await dbContext.Districts.FirstOrDefaultAsync(x => x.Name == district);
 
             if (dbDistrict == null)
             {
@@ -43,7 +44,7 @@ namespace RealEstateApp.Data.DataServices
 
             property.District = dbDistrict;
 
-            var dbPropertyType = dbContext.PropertyTypes.FirstOrDefault(x => x.Name == propertyType);
+            var dbPropertyType = await dbContext.PropertyTypes.FirstOrDefaultAsync(x => x.Name == propertyType);
 
             if (dbPropertyType == null)
             {
@@ -52,7 +53,7 @@ namespace RealEstateApp.Data.DataServices
 
             property.PropertyType = dbPropertyType;
 
-            var dbBuildingType = dbContext.BuildingTypes.FirstOrDefault(x => x.Name == buildingType);
+            var dbBuildingType = await dbContext.BuildingTypes.FirstOrDefaultAsync(x => x.Name == buildingType);
 
             if (dbBuildingType == null)
             {
@@ -61,9 +62,18 @@ namespace RealEstateApp.Data.DataServices
 
             property.BuildingType = dbBuildingType;
 
-            dbContext.Add(property);
-            dbContext.SaveChanges();
-
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                await dbContext.AddAsync(property);
+                await dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new InvalidOperationException($"DB Add Property Transaction failed:  {ex.Message}");
+            }
         }
     }
 }

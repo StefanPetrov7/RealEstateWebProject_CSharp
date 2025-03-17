@@ -9,21 +9,22 @@ namespace RealEstateApp.Data.DataServices
         private readonly ApplicationDbContext dbContext;
         public TagService(ApplicationDbContext dbContext)
         {
-            this.dbContext = dbContext; 
+            this.dbContext = dbContext;
         }
-        public void AddTag(string name, int? importance = null)
+        public async Task AddTag(string name, int? importance = null)
         {
+
             Tag tag = new Tag()
             {
                 Name = name,
                 Importance = importance
             };
 
-            this.dbContext.Tags.Add(tag);   
-            this.dbContext.SaveChanges();
+            await this.dbContext.Tags.AddAsync(tag);
+            await this.dbContext.SaveChangesAsync();
         }
 
-        public void TagAllProperties()
+        public Task TagAllProperties()
         {
             throw new NotImplementedException();
         }

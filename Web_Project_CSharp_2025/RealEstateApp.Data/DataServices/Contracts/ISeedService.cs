@@ -8,8 +8,8 @@ namespace RealEstateApp.Data.DataServices.Contracts
 {
     public interface ISeedService
     {
-        void RunSeed();
+        Task RunSeed();
 
-        void ImportProperties(string fileLocation);
+        Task ImportProperties(string fileLocation);
     }
 }

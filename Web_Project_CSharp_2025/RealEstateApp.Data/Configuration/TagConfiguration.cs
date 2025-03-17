@@ -47,5 +47,4 @@ namespace RealEstateApp.Data.Configuration
         }
     }
 
-
 }

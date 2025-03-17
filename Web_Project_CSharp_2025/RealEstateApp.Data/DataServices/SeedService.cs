@@ -2,6 +2,7 @@
 using System.Text.Json;
 
 using RealEstateApp.Data.ImportModels;
+using System.Runtime.CompilerServices;
 
 namespace RealEstateApp.Data.DataServices
 {
@@ -16,18 +17,18 @@ namespace RealEstateApp.Data.DataServices
             this.service = service;
         }
 
-        public void RunSeed()
+        public async Task RunSeed()
         {
-            if (this.service.HasPropertyBeenAdded())
+            if (await this.service.HasPropertyBeenAdded())
             {
                 return;
             }
             //ImportProperties(propertyHouseString);
-            ImportProperties(propertyAppartementsString);
+            await ImportProperties(propertyAppartementsString);
         }
 
 
-        public void ImportProperties(string fileLocation)
+        public async Task  ImportProperties(string fileLocation)
         {
             if (File.Exists(fileLocation) == false)
             {
@@ -37,7 +38,7 @@ namespace RealEstateApp.Data.DataServices
 
             foreach (var prop in jsonProperties)
             {
-                this.service.AddProperty(prop.District, prop.Floor, prop.TotalFloor, prop.Size, prop.YardSize, prop.Year, prop.Type, prop.BuildingType, prop.Price);
+                await this.service.AddProperty(prop.District, prop.Floor, prop.TotalFloor, prop.Size, prop.YardSize, prop.Year, prop.Type, prop.BuildingType, prop.Price);
                 Console.Write(".");
             }
         }

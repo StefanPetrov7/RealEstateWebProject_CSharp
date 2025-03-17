@@ -17,5 +17,11 @@ namespace RealEstateApp.Common
             public const int PropertyMaxYear = 2030;
             public const int PropertyMinTotalFloors = 1;
         }
+
+        public static class Tag
+        {
+            public const int TagNameMinLength = 4;
+            public const int TagNameMaxLength = 20;  
+        }
     }
 }

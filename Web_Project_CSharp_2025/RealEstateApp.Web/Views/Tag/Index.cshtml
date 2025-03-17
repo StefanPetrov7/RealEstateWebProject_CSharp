@@ -1,0 +1,26 @@
+﻿@using RealEstateApp.Web.ViewModels.Tag;
+@model IEnumerable<TagView>
+
+@{
+    ViewData["Title"] = "All Tags";
+}
+
+<h2>Tags</h2>
+
+<!-- Button to add a new tag -->
+<a asp-action="Create" class="btn btn-success mb-4">Add Tag with selected properties.</a>
+
+<div class="row">
+    @foreach (var tag in Model)
+    {
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <img src="~/Images/Tags.jpg" class="card-img-top" alt="Cinema Image" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">@tag.Name</h5>
+                    <a asp-action="Details" asp-route-id="@tag.Id" class="btn btn-primary">View all tagged properties</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -8,9 +8,9 @@ namespace RealEstateApp.Data.DataServices.Contracts
 {
     public interface ITagService
     {
-        void AddTag(string name, int? importance = null);   
+        Task AddTag(string name, int? importance = null);   
 
-        void TagAllProperties();
+        Task TagAllProperties();
          
     }
 }

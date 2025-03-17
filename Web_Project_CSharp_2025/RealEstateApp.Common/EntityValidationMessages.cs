@@ -20,8 +20,11 @@ namespace RealEstateApp.Common
             public const string PropertyDistrictErrorMessage = "Property Type length must be min 3 symbols.";
             public const string PropertyTypeErrorMessage = "Property Type length must be min 4 symbols.";
             public const string PropertyBuildingTypeErrorMessage = "Building Type length must be at least 2.";
-    
+        }
 
+        public static class Tag
+        {
+            public const string TagNameErrorMessage = "Name length must be between 4 and 20 symbols.";
         }
     }
 }

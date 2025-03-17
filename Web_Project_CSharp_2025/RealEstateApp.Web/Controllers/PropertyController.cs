@@ -7,6 +7,7 @@ using RealEstateApp.Web.ViewModels.Property;
 
 namespace RealEstateApp.Web.Controllers
 {
+    // TODO make the controller async.
     public class PropertyController : Controller
     {
         private readonly ApplicationDbContext dbContext;
