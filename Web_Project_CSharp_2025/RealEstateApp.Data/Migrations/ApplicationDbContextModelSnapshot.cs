@@ -254,6 +254,24 @@ namespace RealEstateApp.Data.Migrations
                     b.ToTable("Districts");
                 });
 
+            modelBuilder.Entity("RealEstateApp.Data.Models.Favorite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Importance")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Favorites");
+                });
+
             modelBuilder.Entity("RealEstateApp.Data.Models.Property", b =>
                 {
                     b.Property<Guid>("Id")
@@ -301,19 +319,24 @@ namespace RealEstateApp.Data.Migrations
                     b.ToTable("Properties");
                 });
 
-            modelBuilder.Entity("RealEstateApp.Data.Models.PropertyTag", b =>
+            modelBuilder.Entity("RealEstateApp.Data.Models.PropertyFavorite", b =>
                 {
                     b.Property<Guid>("PropertyId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TagId")
+                    b.Property<Guid>("FavoriteId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("PropertyId", "TagId");
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
-                    b.HasIndex("TagId");
+                    b.HasKey("PropertyId", "FavoriteId");
 
-                    b.ToTable("PropertyTags");
+                    b.HasIndex("FavoriteId");
+
+                    b.ToTable("PropertyFavorites");
                 });
 
             modelBuilder.Entity("RealEstateApp.Data.Models.PropertyType", b =>
@@ -329,46 +352,6 @@ namespace RealEstateApp.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PropertyTypes");
-                });
-
-            modelBuilder.Entity("RealEstateApp.Data.Models.Tag", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("Importance")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tags");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("9b0b4ad3-4069-45a4-b5e6-74ae05ba9295"),
-                            Name = "Expensive"
-                        },
-                        new
-                        {
-                            Id = new Guid("afb72774-282e-4c0a-9f5d-5b604776e124"),
-                            Name = "Constructed"
-                        },
-                        new
-                        {
-                            Id = new Guid("f4402520-89c6-4dcc-a2dc-2e4d25572188"),
-                            Name = "Size"
-                        },
-                        new
-                        {
-                            Id = new Guid("25a30cf6-43fe-4cbe-9f35-f71d40eba0d3"),
-                            Name = "Floor"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -449,23 +432,23 @@ namespace RealEstateApp.Data.Migrations
                     b.Navigation("PropertyType");
                 });
 
-            modelBuilder.Entity("RealEstateApp.Data.Models.PropertyTag", b =>
+            modelBuilder.Entity("RealEstateApp.Data.Models.PropertyFavorite", b =>
                 {
+                    b.HasOne("RealEstateApp.Data.Models.Favorite", "Favorite")
+                        .WithMany("FavoriteProperties")
+                        .HasForeignKey("FavoriteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("RealEstateApp.Data.Models.Property", "Property")
-                        .WithMany("PropertyTags")
+                        .WithMany("PropertyFavorites")
                         .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("RealEstateApp.Data.Models.Tag", "Tag")
-                        .WithMany("TagProperties")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.Navigation("Favorite");
 
                     b.Navigation("Property");
-
-                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("RealEstateApp.Data.Models.BuildingType", b =>
@@ -478,19 +461,19 @@ namespace RealEstateApp.Data.Migrations
                     b.Navigation("Properties");
                 });
 
+            modelBuilder.Entity("RealEstateApp.Data.Models.Favorite", b =>
+                {
+                    b.Navigation("FavoriteProperties");
+                });
+
             modelBuilder.Entity("RealEstateApp.Data.Models.Property", b =>
                 {
-                    b.Navigation("PropertyTags");
+                    b.Navigation("PropertyFavorites");
                 });
 
             modelBuilder.Entity("RealEstateApp.Data.Models.PropertyType", b =>
                 {
                     b.Navigation("Properties");
-                });
-
-            modelBuilder.Entity("RealEstateApp.Data.Models.Tag", b =>
-                {
-                    b.Navigation("TagProperties");
                 });
 #pragma warning restore 612, 618
         }

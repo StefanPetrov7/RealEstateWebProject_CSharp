@@ -34,6 +34,7 @@
                 <td>@property.DateAdded.ToString("MMMM yyyy")</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@property.Id" class="btn btn-info">Details</a>
+                    <a asp-action="AddToFavorites" asp-route-id="@property.Id" class="btn btn-info">Add to favorites</a>
                 </td>
             </tr>
         }

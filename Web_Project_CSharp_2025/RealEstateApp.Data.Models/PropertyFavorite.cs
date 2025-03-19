@@ -7,16 +7,18 @@ using System.Threading.Tasks;
 
 namespace RealEstateApp.Data.Models
 {
-    public class PropertyTag
+    public class PropertyFavorite
     {
         public Guid PropertyId { get; set; }
 
         [ForeignKey(nameof(PropertyId))]
         public Property Property { get; set; } = null!;
 
-        public Guid TagId { get; set; }
+        public Guid FavoriteId { get; set; }
 
-        [ForeignKey(nameof(TagId))]
-        public Tag Tag { get; set; } = null!;
+        [ForeignKey(nameof(FavoriteId))]
+        public Favorite Favorite { get; set; } = null!;
+
+        public bool IsDeleted { get; set; }
     }
 }

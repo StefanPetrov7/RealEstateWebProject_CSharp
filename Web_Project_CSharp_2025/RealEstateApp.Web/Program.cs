@@ -8,7 +8,7 @@ namespace RealEstateApp.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +28,8 @@ namespace RealEstateApp.Web
 
             builder.Services.AddScoped<ISeedService, SeedService>();
             builder.Services.AddScoped<IPropertyService, PropertyService>();
-            builder.Services.AddScoped<ITagService, TagService>();
+            builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+            builder.Services.AddScoped<IValidationService, ValidationService>();
 
             WebApplication app = builder.Build();
 
@@ -54,7 +55,7 @@ namespace RealEstateApp.Web
             using (var scope = app.Services.CreateScope())
             {
                 var seedServices = scope.ServiceProvider.GetRequiredService<ISeedService>();
-                seedServices.RunSeed();
+                await seedServices.RunSeed();
             }
 
             app.MapControllerRoute(

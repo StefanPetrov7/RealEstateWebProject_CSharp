@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RealEstateApp.Data;
 using RealEstateApp.Data.DataServices.Contracts;
-using RealEstateApp.Data.ImportModels;
 using RealEstateApp.Data.Models;
 
 namespace RealEstateApp.Data.DataServices
@@ -16,7 +14,7 @@ namespace RealEstateApp.Data.DataServices
 
         public async Task<bool> HasPropertyBeenAdded() 
         {
-            return await this.dbContext.Properties.AnyAsync(); 
+            return await this.dbContext.Properties.AnyAsync(); ;
         }
 
         public async Task AddProperty(string district, int floor, int totalFloor, int size, int? yardSize, int? year, string propertyType, string buildingType, int? price)

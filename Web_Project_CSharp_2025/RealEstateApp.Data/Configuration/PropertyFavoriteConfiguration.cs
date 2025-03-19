@@ -5,20 +5,23 @@ using RealEstateApp.Data.Models;
 
 namespace RealEstateApp.Data.Configuration
 {
-    public class PropertyTagsConfiguration : IEntityTypeConfiguration<PropertyTag>
+    public class PropertyFavoriteConfiguration : IEntityTypeConfiguration<PropertyFavorite>
     {
         // Fluent API for mapping table PropertyTag >> Many to Many relation
-        public void Configure(EntityTypeBuilder<PropertyTag> builder)
+        public void Configure(EntityTypeBuilder<PropertyFavorite> builder)
         {
-            builder.HasKey(x => new { x.PropertyId, x.TagId });
+            builder.HasKey(x => new { x.PropertyId, x.FavoriteId });
+
+            builder.Property(x => x.IsDeleted)
+                .HasDefaultValue(false);
 
             builder.HasOne(x => x.Property)
-                .WithMany(x => x.PropertyTags)
+                .WithMany(x => x.PropertyFavorites)
                 .IsRequired(true)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.Tag)
-             .WithMany(x => x.TagProperties)
+            builder.HasOne(x => x.Favorite)
+             .WithMany(x => x.FavoriteProperties)
              .IsRequired(true)
              .OnDelete(DeleteBehavior.Restrict);
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using RealEstateApp.Web.ViewModels.Favorite;
+using System.ComponentModel.DataAnnotations;
 
 using static RealEstateApp.Common.EntityValidationConstants.Property;
 using static RealEstateApp.Common.EntityValidationMessages.Property;
@@ -6,8 +7,15 @@ using static RealEstateApp.Common.EntityValidationMessages.Property;
 
 namespace RealEstateApp.Web.ViewModels.Property
 {
-    public class PropertyAddFormInputModel
+    public class PropertyAddToFavoritesModel
     {
+        public PropertyAddToFavoritesModel()
+        {
+            this.Favorites = new List<FavoriteCheckBoxInputModel>();    
+        }
+
+        [Required]
+        public string Id { get; set; } = null!;
 
         [Required]
         [MinLength(PropertyDistrictMinLength, ErrorMessage = PropertyDistrictErrorMessage)]
@@ -39,6 +47,8 @@ namespace RealEstateApp.Web.ViewModels.Property
         [Range(PropertyMinPrice, int.MaxValue, ErrorMessage = PropertyPriceErrorMessage)]
         public int? Price { get; set; }
 
+        public DateTime DateAdded { get; set; }
 
+        public IList<FavoriteCheckBoxInputModel> Favorites { get; set; }
     }
 }

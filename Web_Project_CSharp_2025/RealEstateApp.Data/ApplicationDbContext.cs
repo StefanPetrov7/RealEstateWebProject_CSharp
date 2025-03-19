@@ -21,11 +21,11 @@ namespace RealEstateApp.Data
 
         public virtual DbSet<Property> Properties { get; set; }
 
-        public virtual DbSet<PropertyTag> PropertyTags { get; set; }
+        public virtual DbSet<PropertyFavorite> PropertyFavorites { get; set; }
 
         public virtual DbSet<PropertyType> PropertyTypes { get; set; }
 
-        public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<Favorite> Favorites { get; set; }
 
 
         // Below configuration will be done in the Program.cs, TODO if needed Lazy Loading can be configured!

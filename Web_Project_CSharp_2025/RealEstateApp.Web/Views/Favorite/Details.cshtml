@@ -1,0 +1,59 @@
+﻿@using RealEstateApp.Web.ViewModels.Favorite;
+@using RealEstateApp.Web.ViewModels.Property;
+@model FavoritePropertyViewModel;
+
+@{
+    ViewData["Title"] = "Favorite List";
+}
+
+<h2>@Model.Name - Properties</h2>
+
+<p><strong>Total properties:</strong> @Model.Properties.Count</p>
+
+<h3>Properties Currently Selected:</h3>
+
+@if (Model.Properties.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Building Type</th>
+                <th>District</th>
+                <th>Size</th>
+                <th>Floor</th>
+                <th>Year</th>
+                <th>Price</th>
+                <th>Date Added</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (PropertyViewModel property in this.Model.Properties)
+            {
+                string floor = property.Floor == null ? "N/A" : property.Floor.ToString()!;
+                string year = property.Year == null ? "N/A" : property.Year.ToString()!;
+
+                <tr>
+                    <td>@property.Name</td>
+                    <td>@property.BuildingType</td>
+                    <td>@property.DistrictName</td>
+                    <td>@property.Size</td>
+                    <td>@floor</td>
+                    <td>@year</td>
+                    <td>@property.Price</td>
+                    <td>@property.DateAdded.ToString("MMMM yyyy")</td>
+                    <td>
+                        <a asp-action="Details" asp-controller="Property" asp-route-id="@property.Id" class="btn btn-info">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No properties are currently selected in this favorites.</p>
+}
+
+<a asp-action="Index" class="btn btn-secondary mt-3">Back to All Favorites</a>

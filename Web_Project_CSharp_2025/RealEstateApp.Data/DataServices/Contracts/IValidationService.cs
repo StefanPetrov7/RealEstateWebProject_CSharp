@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace RealEstateApp.Data.DataServices.Contracts
 {
-    public interface ITagService
+    public interface IValidationService
     {
-        Task AddTag(string name, int? importance = null);   
-
-        Task TagAllProperties();
-         
+        bool IsValidGuid(string id, out Guid guidId);
     }
 }

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace RealEstateApp.Data.Models
 {
-    public class Tag
+    public class Favorite
     {
-        public Tag()
+        public Favorite()
         {
             this.Id = Guid.NewGuid();   
-            this.TagProperties = new HashSet<PropertyTag>();
+            this.FavoriteProperties = new HashSet<PropertyFavorite>();
         }
 
         public Guid Id { get; set; }
@@ -23,7 +23,7 @@ namespace RealEstateApp.Data.Models
 
         public int? Importance { get; set; }
 
-        [InverseProperty(nameof(PropertyTag.Tag))]
-        public virtual ICollection<PropertyTag>? TagProperties { get; set; }
+        [InverseProperty(nameof(PropertyFavorite.Favorite))]
+        public virtual ICollection<PropertyFavorite>? FavoriteProperties { get; set; }
     }
 }

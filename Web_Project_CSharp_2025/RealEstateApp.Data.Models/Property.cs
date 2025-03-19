@@ -9,7 +9,7 @@ namespace RealEstateApp.Data.Models
         public Property()
         {
             this.Id = Guid.NewGuid();
-            this.PropertyTags = new HashSet<PropertyTag>();
+            this.PropertyFavorites = new HashSet<PropertyFavorite>();
         }
 
         [Key]
@@ -51,7 +51,7 @@ namespace RealEstateApp.Data.Models
         [ForeignKey(nameof(BuildingTypeId))]
         public virtual BuildingType? BuildingType { get; set; }
 
-        [InverseProperty(nameof(PropertyTag.Property))]
-        public virtual ICollection<PropertyTag>? PropertyTags { get; set; }
+        [InverseProperty(nameof(PropertyFavorite.Property))]
+        public virtual ICollection<PropertyFavorite>? PropertyFavorites { get; set; }
     }
 }

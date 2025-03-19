@@ -18,10 +18,10 @@ namespace RealEstateApp.Common
             public const int PropertyMinTotalFloors = 1;
         }
 
-        public static class Tag
+        public static class Favorite
         {
-            public const int TagNameMinLength = 4;
-            public const int TagNameMaxLength = 20;  
+            public const int FavoriteNameMinLength = 4;
+            public const int FavoriteNameMaxLength = 20;  
         }
     }
 }

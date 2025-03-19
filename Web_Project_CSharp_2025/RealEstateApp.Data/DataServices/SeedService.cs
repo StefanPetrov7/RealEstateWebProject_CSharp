@@ -8,7 +8,6 @@ namespace RealEstateApp.Data.DataServices
 {
     public class SeedService : ISeedService
     {
-        // string propertyHouseString = "D:\\Git\\RealEstateWebProject_CSharp\\Web_Project_CSharp_2025\\RealEstateApp.Data\\JsonImportData\\imot.bg-houses-Sofia-raw-data-2021-03-18.json";
         string propertyAppartementsString = "D:\\Git\\RealEstateWebProject_CSharp\\Web_Project_CSharp_2025\\RealEstateApp.Data\\JsonImportData\\imot.bg-raw-data-2021-03-18.json";
 
         private readonly IPropertyService service;
@@ -23,8 +22,8 @@ namespace RealEstateApp.Data.DataServices
             {
                 return;
             }
-            //ImportProperties(propertyHouseString);
-            await ImportProperties(propertyAppartementsString);
+
+           await ImportProperties(propertyAppartementsString);
         }
 
 

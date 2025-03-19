@@ -22,9 +22,9 @@ namespace RealEstateApp.Common
             public const string PropertyBuildingTypeErrorMessage = "Building Type length must be at least 2.";
         }
 
-        public static class Tag
+        public static class Favorite
         {
-            public const string TagNameErrorMessage = "Name length must be between 4 and 20 symbols.";
+            public const string FavoriteNameErrorMessage = "Name length must be between 4 and 20 symbols.";
         }
     }
 }

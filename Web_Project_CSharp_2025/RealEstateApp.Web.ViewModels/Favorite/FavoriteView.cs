@@ -1,7 +1,7 @@
 ﻿
-namespace RealEstateApp.Web.ViewModels.Tag
+namespace RealEstateApp.Web.ViewModels.Favorite
 {
-    public class TagView
+    public class FavoriteView
     {
         public string Id { get; set; } = null!;
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RealEstateApp.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDb : Migration
+    public partial class CreateDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -75,6 +75,19 @@ namespace RealEstateApp.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Favorites",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Importance = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Favorites", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PropertyTypes",
                 columns: table => new
                 {
@@ -84,19 +97,6 @@ namespace RealEstateApp.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PropertyTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tags",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Importance = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tags", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -245,27 +245,27 @@ namespace RealEstateApp.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PropertyTags",
+                name: "PropertyFavorites",
                 columns: table => new
                 {
                     PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TagId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    FavoriteId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PropertyTags", x => new { x.PropertyId, x.TagId });
+                    table.PrimaryKey("PK_PropertyFavorites", x => new { x.PropertyId, x.FavoriteId });
                     table.ForeignKey(
-                        name: "FK_PropertyTags_Properties_PropertyId",
+                        name: "FK_PropertyFavorites_Favorites_FavoriteId",
+                        column: x => x.FavoriteId,
+                        principalTable: "Favorites",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PropertyFavorites_Properties_PropertyId",
                         column: x => x.PropertyId,
                         principalTable: "Properties",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PropertyTags_Tags_TagId",
-                        column: x => x.TagId,
-                        principalTable: "Tags",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -323,9 +323,9 @@ namespace RealEstateApp.Data.Migrations
                 column: "PropertyTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PropertyTags_TagId",
-                table: "PropertyTags",
-                column: "TagId");
+                name: "IX_PropertyFavorites_FavoriteId",
+                table: "PropertyFavorites",
+                column: "FavoriteId");
         }
 
         /// <inheritdoc />
@@ -347,7 +347,7 @@ namespace RealEstateApp.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "PropertyTags");
+                name: "PropertyFavorites");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -356,10 +356,10 @@ namespace RealEstateApp.Data.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Properties");
+                name: "Favorites");
 
             migrationBuilder.DropTable(
-                name: "Tags");
+                name: "Properties");
 
             migrationBuilder.DropTable(
                 name: "BuildingTypes");

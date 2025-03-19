@@ -1,8 +1,8 @@
-﻿@using RealEstateApp.Web.ViewModels.Tag;
-@model AddTagFormInputModel;
+﻿@using RealEstateApp.Web.ViewModels.Favorite;
+@model AddFavoriteFormInputModel;
 
 @{
-    ViewData["Title"] = "Create Tag";
+    ViewData["Title"] = "Create Favorites";
 }
 
 <h2>Add a New Cinema</h2>
@@ -21,7 +21,7 @@
     </div>
 
     <div class="form-group mt-3">
-        <button type="submit" class="btn btn-primary">Add Tag</button>
+        <button type="submit" class="btn btn-primary">Add Favorites</button>
         <a asp-action="Index" class="btn btn-secondary ml-2">Back to List</a>
     </div>
 </form>
