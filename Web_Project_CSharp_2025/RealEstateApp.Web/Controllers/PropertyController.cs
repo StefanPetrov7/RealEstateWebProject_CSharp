@@ -125,12 +125,12 @@ namespace RealEstateApp.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AddToFavorites(string id)
         {
-            if (this.validationService.IsValidGuid(id, out Guid guidId) == false)
+            if (this.validationService.IsValidGuid(id, out Guid propIdGuid ) == false)
             {
                 return RedirectToAction(nameof(Index));
             }
 
-            Property? property = await this.dbContext.Properties.Where(x => x.Id == guidId)
+            Property? property = await this.dbContext.Properties.Where(x => x.Id == propIdGuid)
                 .Include(x => x.PropertyType)
                 .Include(x => x.BuildingType)
                 .Include(x => x.District)
@@ -141,11 +141,11 @@ namespace RealEstateApp.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            PropertyAddToFavoritesModel propertyAddToFavoritesModel = new PropertyAddToFavoritesModel()
+            PropertyAddToFavoritesModel propAddToFavModel = new PropertyAddToFavoritesModel()
             {
                 Id = property.Id.ToString(),
                 PropertyType = property.PropertyType?.Name ?? "Unknown",
-                BuildingType = property.BuildingType?.Name ?? "Unknown",
+                BuildingType = property.BuildingType?.Name ?? "Unknown", 
                 District = property.District?.Name ?? "Unknown",
                 Floor = property.Floor,
                 TotalFloors = property.TotalFloors,
@@ -161,11 +161,11 @@ namespace RealEstateApp.Web.Controllers
                 {
                     Id = x.Id.ToString(),
                     Name = x.Name,
-                    IsSelected = x.FavoriteProperties!.Any(x => x.Property.Id == guidId),
+                    IsSelected = x.FavoriteProperties!.Any(x => x.Property.Id == propIdGuid && x.IsDeleted == false),
                 }).ToArrayAsync()
             };
-
-            return this.View(propertyAddToFavoritesModel);
+               
+            return this.View(propAddToFavModel);
         }
 
         [HttpPost]
@@ -196,42 +196,57 @@ namespace RealEstateApp.Web.Controllers
             foreach (FavoriteCheckBoxInputModel favCheckBoxInputModel in propAddToFavModel.Favorites)
             {
 
+                bool isFavGuidValid = this.validationService.IsValidGuid(favCheckBoxInputModel.Id, out Guid validFavGuid);
+
+                if (isFavGuidValid == false)
+                {
+                    continue;
+                }
+
+                Favorite? favorite = await this.dbContext.Favorites.FirstOrDefaultAsync(x => x.Id == validFavGuid);
+
+                if (favorite == null)
+                {
+                    return this.RedirectToAction(nameof(Index));
+                }
+
+                PropertyFavorite? propFav = await this.dbContext.PropertyFavorites.FirstOrDefaultAsync(x => x.PropertyId == validPropId && x.FavoriteId == validFavGuid);
+
                 if (favCheckBoxInputModel.IsSelected == true)
                 {
-                    bool isFavGuidValid = this.validationService.IsValidGuid(favCheckBoxInputModel.Id, out Guid validFavGuid);
-
-
-                    if (isFavGuidValid == false)
+                    if (propFav == null)
                     {
-                        continue;
+                        PropertyFavorite propFavModel = new PropertyFavorite()
+                        {
+                            PropertyId = validPropId,
+                            FavoriteId = validFavGuid,
+                        };
+
+                        entitiesToAdd.Add(propFavModel);
                     }
-
-                    Favorite? favorite = await this.dbContext.Favorites.FirstOrDefaultAsync(x => x.Id == validFavGuid);
-
-                    if (favorite == null)
+                    else
                     {
-                        return this.RedirectToAction(nameof(Index));
+                        propFav.IsDeleted = false;
                     }
-
-                    PropertyFavorite propFavModel = new PropertyFavorite()
+                }
+                else 
+                {
+                    if (propFav != null) 
                     {
-                        PropertyId = validPropId,
-                        FavoriteId = validFavGuid,
-                    };
-
-                    entitiesToAdd.Add(propFavModel);    
+                        propFav.IsDeleted = true;
+                    }  
 
                 }
 
+                await this.dbContext.SaveChangesAsync();
             }
 
-            await this.dbContext.PropertyFavorites.AddRangeAsync(entitiesToAdd);  
+            await this.dbContext.PropertyFavorites.AddRangeAsync(entitiesToAdd);
             await this.dbContext.SaveChangesAsync();
-            return this.RedirectToAction(nameof(Index), "Favorite");
+            return this.RedirectToAction(nameof(Index));
             
         }
     }
 }
 
 
-//PropertyFavorite? propFav = await this.dbContext.PropertyFavorites.FirstOrDefaultAsync(x => x.PropertyId == validPropId && x.FavoriteId == validFavGuid);

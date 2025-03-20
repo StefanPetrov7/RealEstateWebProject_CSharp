@@ -61,12 +61,12 @@ namespace RealEstateApp.Web.Controllers
         public async Task<IActionResult> Details(string? id)
         {
 
-            if (this.validationService.IsValidGuid(id!, out Guid tagGuid) == false)
+            if (this.validationService.IsValidGuid(id!, out Guid favGuid) == false)
             {
                 return RedirectToAction(nameof(Index));
             }
 
-            FavoritePropertyViewModel? favProperties = await this.dbContext.Favorites.Where(x => x.Id == tagGuid)
+            FavoritePropertyViewModel? favProperties = await this.dbContext.Favorites.Where(x => x.Id == favGuid)
                 .Include(x => x.FavoriteProperties)!
                 .ThenInclude(x => x.Property)
                 .Select(x => new FavoritePropertyViewModel()

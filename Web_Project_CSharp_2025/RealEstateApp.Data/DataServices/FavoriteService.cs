@@ -24,16 +24,6 @@ namespace RealEstateApp.Data.DataServices
             await this.dbContext.SaveChangesAsync();
         }
 
-        public async Task AddPropertyToFavorites(Guid propGuid, Guid favGuid)
-        {
-            PropertyFavorite propertyFavorite = new PropertyFavorite()
-            {
-                PropertyId = propGuid,
-                FavoriteId = favGuid,
-            };
-
-            await this.dbContext.PropertyFavorites.AddAsync(propertyFavorite);
-            await this.dbContext.SaveChangesAsync();
-        }
+      
     }
 }
