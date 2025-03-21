@@ -7,7 +7,7 @@ using System.Reflection.Emit;
 
 namespace RealEstateApp.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -37,11 +37,10 @@ namespace RealEstateApp.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-
-            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
             base.OnModelCreating(builder);
 
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+           
         }
     }
 }

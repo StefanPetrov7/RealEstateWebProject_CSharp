@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RealEstateApp.Data.Models;
 
-
 namespace RealEstateApp.Data.Configuration
 {
     public class PropertyFavoriteConfiguration : IEntityTypeConfiguration<PropertyFavorite>
@@ -24,7 +23,6 @@ namespace RealEstateApp.Data.Configuration
              .WithMany(x => x.FavoriteProperties)
              .IsRequired(true)
              .OnDelete(DeleteBehavior.Restrict);
-
         }
     }
 }
