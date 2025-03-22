@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RealEstateApp.Data.Models
 {
@@ -8,8 +9,11 @@ namespace RealEstateApp.Data.Models
         public ApplicationUser()
         {
             this.Id = Guid.NewGuid();   
+            this.Favorites = new HashSet<UserFavorites>();  
         }
 
-        // TODO more properties can be added. 
+        [InverseProperty(nameof(UserFavorites.User))]
+        public virtual ICollection<UserFavorites>? Favorites { get; set; }
+
     }
 }

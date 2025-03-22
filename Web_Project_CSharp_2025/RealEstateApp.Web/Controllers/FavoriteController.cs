@@ -6,7 +6,6 @@ using RealEstateApp.Data.DataServices.Contracts;
 using RealEstateApp.Web.ViewModels.Favorite;
 using RealEstateApp.Web.ViewModels.Property;
 
-
 namespace RealEstateApp.Web.Controllers
 {
     public class FavoriteController : Controller
@@ -54,7 +53,6 @@ namespace RealEstateApp.Web.Controllers
 
             await this.favoriteService.AddFavorite(favoriteFormModel.Name, favoriteFormModel.Importance);
             return this.RedirectToAction(nameof(Index));
-
         }
 
         [HttpGet]
@@ -96,7 +94,5 @@ namespace RealEstateApp.Web.Controllers
             return View(favProperties);
 
         }
-
-
     }
 }

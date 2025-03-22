@@ -6,7 +6,6 @@ namespace RealEstateApp.Data.Configuration
 {
     public class PropertyFavoriteConfiguration : IEntityTypeConfiguration<PropertyFavorite>
     {
-        // Fluent API for mapping table PropertyTag >> Many to Many relation
         public void Configure(EntityTypeBuilder<PropertyFavorite> builder)
         {
             builder.HasKey(x => new { x.PropertyId, x.FavoriteId });

@@ -47,6 +47,8 @@ namespace RealEstateApp.Web.ViewModels.Property
         [Range(PropertyMinPrice, int.MaxValue, ErrorMessage = PropertyPriceErrorMessage)]
         public int? Price { get; set; }
 
+        public string? ImageUrl { get; set; }
+
         public DateTime DateAdded { get; set; }
 
         public IList<FavoriteCheckBoxInputModel> Favorites { get; set; }

@@ -7,13 +7,16 @@
 <p><strong>Release Date:</strong> @Model.DateAdded.ToString("MMMM yyyy")</p>
 <p><strong>Building Type:</strong> @Model.BuildingType</p>
 <p><strong>District</strong> @Model.DistrictName</p>
-<p><strong>Property Size M2</strong> @Model.Size</p>
-<p><strong>Property Yard Size M2</strong> @Model.YardSize</p>
+<p><strong>Property Size m²</strong> @Model.Size</p>
+<p><strong>Property Yard Size m²</strong> @Model.YardSize</p>
 <p><strong>Floor</strong> @Model.Floor</p>
 <p><strong>Total Floors</strong> @Model.TotalFloors</p>
-<p><strong>Price - Euro</strong> @Model.Price</p>
+<p><strong>Price - €</strong> @Model.Price</p>
 <p><strong>Year</strong> @Model.Year</p>
-
+<img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? Url.Content("~/Images/default_property_pic.jpg") : (Model.ImageUrl.StartsWith("http") ? Model.ImageUrl : Url.Content($"~/Images/{Model.ImageUrl}")))"
+     class="card-img-top"
+     alt="Property Image"
+     style="height: 500px; object-fit: cover;">
 
 <a asp-action="Index" class="btn btn-primary">Back to All Properties</a>
 

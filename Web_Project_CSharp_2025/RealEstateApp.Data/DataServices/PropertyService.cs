@@ -2,6 +2,8 @@
 using RealEstateApp.Data.DataServices.Contracts;
 using RealEstateApp.Data.Models;
 
+using static RealEstateApp.Common.AppConstants;
+
 namespace RealEstateApp.Data.DataServices
 {
     public class PropertyService : IPropertyService
@@ -12,12 +14,12 @@ namespace RealEstateApp.Data.DataServices
             this.dbContext = dbContext;
         }
 
-        public async Task<bool> HasPropertyBeenAdded() 
+        public async Task<bool> HasPropertyBeenAdded()
         {
             return await this.dbContext.Properties.AnyAsync(); ;
         }
 
-        public async Task AddProperty(string district, int floor, int totalFloor, int size, int? yardSize, int? year, string propertyType, string buildingType, int? price)
+        public async Task AddProperty(string district, int floor, int totalFloor, int size, int? yardSize, int? year, string propertyType, string buildingType, int? price, string imageUrl = null)
         {
 
             var property = new Property
@@ -31,6 +33,7 @@ namespace RealEstateApp.Data.DataServices
                 YardSize = yardSize <= 0 ? null : yardSize,
                 Year = year <= 1800 ? null : year,
                 DateAdded = DateTime.Now,
+                ImageUrl = imageUrl ?? PropertyDefaultImageUrl,
             };
 
             var dbDistrict = await dbContext.Districts.FirstOrDefaultAsync(x => x.Name == district);

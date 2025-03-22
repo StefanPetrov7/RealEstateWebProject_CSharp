@@ -44,6 +44,7 @@ namespace RealEstateApp.Web.Controllers
                     Size = x.Size,
                     Year = x.Year,
                     DateAdded = x.DateAdded,
+                    ImageUrl = x.ImageUrl,  
                 })
                 .ToArrayAsync();
 
@@ -81,7 +82,8 @@ namespace RealEstateApp.Web.Controllers
                  propModel.Year,
                  propModel.PropertyType,
                  propModel.BuildingType,
-                 propModel.Price
+                 propModel.Price,
+                 propModel.ImageUrl!
                  );
 
             return RedirectToAction(nameof(Index));
@@ -110,6 +112,7 @@ namespace RealEstateApp.Web.Controllers
                     YardSize = x.YardSize,
                     Year = x.Year,
                     DateAdded = x.DateAdded,
+                    ImageUrl = x.ImageUrl,  
                 })
                 .FirstOrDefaultAsync();
 
@@ -154,6 +157,7 @@ namespace RealEstateApp.Web.Controllers
                 YardSize = property.YardSize,
                 Year = property.Year,
                 DateAdded = property.DateAdded,
+                ImageUrl = property.ImageUrl,   
                 Favorites = await this.dbContext.Favorites
                 .Include(x => x.FavoriteProperties)!
                 .ThenInclude(x => x.Property)

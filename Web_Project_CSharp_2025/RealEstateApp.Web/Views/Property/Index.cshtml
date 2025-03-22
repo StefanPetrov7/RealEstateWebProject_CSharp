@@ -13,6 +13,7 @@
             <th>Floor</th>
             <th>Year</th>
             <th>Price - Euro</th>
+            <th>Image</th>
             <th>Date Added</th>
             <th>Actions</th>
         </tr>
@@ -31,6 +32,12 @@
                 <td>@floor</td>
                 <td>@year</td>
                 <td>@property.Price</td>
+                <td>
+                    <img src="@(string.IsNullOrEmpty(property.ImageUrl) ? Url.Content("~/Images/default_property_pic.jpg") : (property.ImageUrl.StartsWith("http") ? property.ImageUrl : Url.Content($"~/Images/{property.ImageUrl}")))"
+                         class="card-img-top"
+                         alt="Property Image"
+                         style="height: 100px; object-fit: cover;">
+                </td>
                 <td>@property.DateAdded.ToString("MMMM yyyy")</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@property.Id" class="btn btn-info">Details</a>

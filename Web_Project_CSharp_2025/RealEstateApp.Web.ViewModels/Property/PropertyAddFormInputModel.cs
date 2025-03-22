@@ -39,6 +39,8 @@ namespace RealEstateApp.Web.ViewModels.Property
         [Range(PropertyMinPrice, int.MaxValue, ErrorMessage = PropertyPriceErrorMessage)]
         public int? Price { get; set; }
 
+        [MaxLength(PropertyImageUrlMaxLength)]
+        public string? ImageUrl { get; set; }
 
     }
 }

@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RealEstateApp.Common\RealEstateApp.Common.csproj" />
     <ProjectReference Include="..\RealEstateApp.Data.Models\RealEstateApp.Data.Models.csproj" />
   </ItemGroup>
 

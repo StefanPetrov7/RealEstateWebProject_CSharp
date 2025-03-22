@@ -14,6 +14,7 @@ namespace RealEstateApp.Data.Models
         {
             this.Id = Guid.NewGuid();   
             this.FavoriteProperties = new HashSet<PropertyFavorite>();
+            this.Favorites = new HashSet<UserFavorites>(); 
         }
 
         public Guid Id { get; set; }
@@ -25,5 +26,8 @@ namespace RealEstateApp.Data.Models
 
         [InverseProperty(nameof(PropertyFavorite.Favorite))]
         public virtual ICollection<PropertyFavorite>? FavoriteProperties { get; set; }
+
+        [InverseProperty(nameof(UserFavorites.Favorites))]
+        public virtual ICollection<UserFavorites> Favorites { get; set; }
     }
 }

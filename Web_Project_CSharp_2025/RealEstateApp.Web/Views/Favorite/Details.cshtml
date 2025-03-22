@@ -24,6 +24,7 @@
                 <th>Floor</th>
                 <th>Year</th>
                 <th>Price</th>
+                <th>Image</th>
                 <th>Date Added</th>
                 <th>Actions</th>
             </tr>
@@ -42,6 +43,9 @@
                     <td>@floor</td>
                     <td>@year</td>
                     <td>@property.Price</td>
+                    <td>
+                        <img src="~/Images/@(string.IsNullOrEmpty(property.ImageUrl) ? "default_property_pic.jpg" : property.ImageUrl)" alt="@property.Name Image" style="height: 100px; object-fit: cover;">
+                    </td>
                     <td>@property.DateAdded.ToString("MMMM yyyy")</td>
                     <td>
                         <a asp-action="Details" asp-controller="Property" asp-route-id="@property.Id" class="btn btn-info">Details</a>

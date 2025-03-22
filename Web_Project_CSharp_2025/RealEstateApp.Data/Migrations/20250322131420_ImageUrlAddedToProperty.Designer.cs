@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealEstateApp.Data;
 
@@ -11,9 +12,11 @@ using RealEstateApp.Data;
 namespace RealEstateApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250322131420_ImageUrlAddedToProperty")]
+    partial class ImageUrlAddedToProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -355,21 +358,6 @@ namespace RealEstateApp.Data.Migrations
                     b.ToTable("PropertyTypes");
                 });
 
-            modelBuilder.Entity("RealEstateApp.Data.Models.UserFavorites", b =>
-                {
-                    b.Property<Guid>("ApplicationUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FavoriteId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ApplicationUserId", "FavoriteId");
-
-                    b.HasIndex("FavoriteId");
-
-                    b.ToTable("UserFavorites");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -467,30 +455,6 @@ namespace RealEstateApp.Data.Migrations
                     b.Navigation("Property");
                 });
 
-            modelBuilder.Entity("RealEstateApp.Data.Models.UserFavorites", b =>
-                {
-                    b.HasOne("RealEstateApp.Data.Models.ApplicationUser", "User")
-                        .WithMany("Favorites")
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RealEstateApp.Data.Models.Favorite", "Favorites")
-                        .WithMany("Favorites")
-                        .HasForeignKey("FavoriteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Favorites");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("RealEstateApp.Data.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Favorites");
-                });
-
             modelBuilder.Entity("RealEstateApp.Data.Models.BuildingType", b =>
                 {
                     b.Navigation("Properties");
@@ -504,8 +468,6 @@ namespace RealEstateApp.Data.Migrations
             modelBuilder.Entity("RealEstateApp.Data.Models.Favorite", b =>
                 {
                     b.Navigation("FavoriteProperties");
-
-                    b.Navigation("Favorites");
                 });
 
             modelBuilder.Entity("RealEstateApp.Data.Models.Property", b =>
