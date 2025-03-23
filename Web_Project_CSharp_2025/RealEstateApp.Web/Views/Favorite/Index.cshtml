@@ -2,13 +2,13 @@
 @model IEnumerable<FavoriteView>
 
 @{
-    ViewData["Title"] = "All Favorites";
+    ViewData["Title"] = "Favorites";
 }
 
 <h2>Favorite Selection</h2>
 
 <!-- Button to add a new tag -->
-<a asp-action="Create" class="btn btn-success mb-4">Add new favorite list of properties.</a>
+<a asp-action="Create" class="btn btn-success mb-4">Create Favorite</a>
 
 <div class="row">
     @foreach (var favorite in Model)

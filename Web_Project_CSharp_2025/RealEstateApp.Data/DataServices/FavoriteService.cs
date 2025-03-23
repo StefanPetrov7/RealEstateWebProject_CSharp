@@ -11,13 +11,14 @@ namespace RealEstateApp.Data.DataServices
         {
             this.dbContext = dbContext;
         }
-        public async Task AddFavorite(string name, int? importance = null)
+        public async Task AddFavorite(string name, Guid userId ,int? importance = null)
         {
 
             Favorite favorite = new Favorite()
             {
                 Name = name,
-                Importance = importance
+                Importance = importance,
+                UserId = userId 
             };
 
             await this.dbContext.Favorites.AddAsync(favorite);

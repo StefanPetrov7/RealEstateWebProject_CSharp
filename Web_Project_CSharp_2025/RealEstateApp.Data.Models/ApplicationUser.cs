@@ -9,11 +9,11 @@ namespace RealEstateApp.Data.Models
         public ApplicationUser()
         {
             this.Id = Guid.NewGuid();   
-            this.Favorites = new HashSet<UserFavorites>();  
+            this.Favorites = new HashSet<Favorite>();  
         }
 
-        [InverseProperty(nameof(UserFavorites.User))]
-        public virtual ICollection<UserFavorites>? Favorites { get; set; }
+        [InverseProperty(nameof(Favorite.User))]
+        public virtual ICollection<Favorite> Favorites { get; set; }
 
     }
 }

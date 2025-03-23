@@ -27,7 +27,6 @@ namespace RealEstateApp.Data
 
         public virtual DbSet<Favorite> Favorites { get; set; }
 
-        public virtual DbSet<UserFavorites> UserFavorites { get; set; }
 
         // Below configuration will be done in the Program.cs, TODO if needed Lazy Loading can be configured!
 

@@ -77,7 +77,7 @@ namespace RealEstateApp.Web.Areas.Identity.Pages.Account
                 user.Email = Input.Email;  // => hard code for the app to work need to be configured!!!!
 
                 await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                var result = await _userManager.CreateAsync(user, Input.Password);      
 
                 if (result.Succeeded)
                 {

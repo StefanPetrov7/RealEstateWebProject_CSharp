@@ -35,10 +35,13 @@ namespace RealEstateApp.Web
                 .AddSignInManager<SignInManager<ApplicationUser>>()
                 .AddUserManager<UserManager<ApplicationUser>>();
 
+            builder.Services.ConfigureApplicationCookie(cfg =>
+            {
+                cfg.LoginPath = "/Identity/Account/Login";
+            });
+
             builder.Services.AddControllersWithViews();
-
             builder.Services.AddRazorPages();
-
             builder.Services.AddScoped<ISeedService, SeedService>();
             builder.Services.AddScoped<IPropertyService, PropertyService>();
             builder.Services.AddScoped<IFavoriteService, FavoriteService>();
