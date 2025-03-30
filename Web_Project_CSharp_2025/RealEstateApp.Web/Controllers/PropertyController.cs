@@ -30,25 +30,7 @@ namespace RealEstateApp.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            IEnumerable<PropertyViewModel> allProperties = await dbContext.Properties
-                .Include(x => x.PropertyType)
-                .Include(x => x.BuildingType)
-                .Include(x => x.District)
-                .Select(x => new PropertyViewModel
-                {
-                    Id = x.Id.ToString(),
-                    Name = x.PropertyType.Name,
-                    BuildingType = x.BuildingType.Name,
-                    DistrictName = x.District.Name,
-                    Floor = x.Floor,
-                    Price = x.Price,
-                    Size = x.Size,
-                    Year = x.Year,
-                    DateAdded = x.DateAdded,
-                    ImageUrl = x.ImageUrl,
-                })
-                .ToArrayAsync();
-
+            IEnumerable<PropertyViewModel> allProperties = await propertyService.IndexGetAllPropertiesAsync();
             return View(allProperties);
         }
 
@@ -75,16 +57,16 @@ namespace RealEstateApp.Web.Controllers
             await this.propertyService
                  .AddProperty
                  (
-                 propModel.District,
-                 (byte)propModel.Floor!,
-                 (byte)propModel.TotalFloors!,
-                 propModel.Size,
-                 propModel.YardSize,
-                 propModel.Year,
-                 propModel.PropertyType,
-                 propModel.BuildingType,
-                 propModel.Price,
-                 propModel.ImageUrl!
+                     propModel.District,
+                     (byte)propModel.Floor!,
+                     (byte)propModel.TotalFloors!,
+                     propModel.Size,
+                     propModel.YardSize,
+                     propModel.Year,
+                     propModel.PropertyType,
+                     propModel.BuildingType,
+                     propModel.Price, 
+                     propModel.ImageUrl!
                  );
 
             return RedirectToAction(nameof(Index));
@@ -93,29 +75,14 @@ namespace RealEstateApp.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(string id)
         {
-            bool isIdValid = Guid.TryParse(id, out Guid idValid);
+            bool isIdValid = this.validationService.IsValidGuid(id, out Guid idValid);
 
             if (isIdValid == false)
             {
                 return RedirectToAction(nameof(Index));
             }
 
-            PropertyViewModel? property = await this.dbContext.Properties.Where(x => x.Id == idValid)
-                .Select(x => new PropertyViewModel
-                {
-                    Name = x.PropertyType.Name,
-                    BuildingType = x.BuildingType.Name,
-                    DistrictName = x.District.Name,
-                    Floor = x.Floor,
-                    TotalFloors = x.TotalFloors,
-                    Price = x.Price,
-                    Size = x.Size,
-                    YardSize = x.YardSize,
-                    Year = x.Year,
-                    DateAdded = x.DateAdded,
-                    ImageUrl = x.ImageUrl,
-                })
-                .FirstOrDefaultAsync();
+            PropertyViewModel? property = await this.propertyService.GetPropertyDetailsByIdAsync(idValid);
 
             if (property == null)
             {
@@ -123,9 +90,7 @@ namespace RealEstateApp.Web.Controllers
             }
 
             return View(property);
-
         }
-
     }
 }
 

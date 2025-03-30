@@ -3,9 +3,13 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 using RealEstateApp.Data;
+using RealEstateApp.Data.Repository;
+using RealEstateApp.Data.Repository.Contracts;
 using RealEstateApp.Data.DataServices;
 using RealEstateApp.Data.DataServices.Contracts;
 using RealEstateApp.Data.Models;
+using RealEstateApp.Web.Infrastructure;
+using RealEstateApp.Web.Infrastructure.Extensions;
 
 namespace RealEstateApp.Web
 {
@@ -40,13 +44,21 @@ namespace RealEstateApp.Web
                 cfg.LoginPath = "/Identity/Account/Login";
             });
 
+            //builder.Services.AddScoped<IRepository<Property, Guid>, BaseRepository<Property, Guid>>();
+            //builder.Services.AddScoped<IRepository<District, Guid>, BaseRepository<District, Guid>>();
+            //builder.Services.AddScoped<IRepository<PropertyType, Guid>, BaseRepository<PropertyType, Guid>>();
+            //builder.Services.AddScoped<IRepository<BuildingType, Guid>, BaseRepository<BuildingType, Guid>>();
+            //builder.Services.AddScoped<IRepository<Favorite, Guid>, BaseRepository<Favorite, Guid>>();
+            //builder.Services.AddScoped<IRepository<PropertyFavorite, object>, BaseRepository<PropertyFavorite, object>>();
+            // Below extension method register all the above repositories!
+            builder.Services.RegisterRepositories(typeof(ApplicationUser).Assembly);
+
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
             builder.Services.AddScoped<ISeedService, SeedService>();
             builder.Services.AddScoped<IPropertyService, PropertyService>();
             builder.Services.AddScoped<IFavoriteService, FavoriteService>();
             builder.Services.AddScoped<IValidationService, ValidationService>();
-
 
             WebApplication app = builder.Build();
 

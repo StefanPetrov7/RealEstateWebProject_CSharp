@@ -25,6 +25,8 @@
   <ItemGroup>
     <ProjectReference Include="..\RealEstateApp.Common\RealEstateApp.Common.csproj" />
     <ProjectReference Include="..\RealEstateApp.Data\RealEstateApp.Data.csproj" />
+    <ProjectReference Include="..\RealEstateApp.Services.Data\RealEstateApp.Services.Data.csproj" />
+    <ProjectReference Include="..\RealEstateApp.Web.Infrastructure\RealEstateApp.Web.Infrastructure.csproj" />
     <ProjectReference Include="..\RealEstateApp.Web.ViewModels\RealEstateApp.Web.ViewModels.csproj" />
   </ItemGroup>
 

@@ -27,20 +27,11 @@ namespace RealEstateApp.Web.Controllers
             this.userManager = userManager;
         }
 
-
         public async Task<IActionResult> Index()
         {
             string userId = this.userManager.GetUserId(this.User)!;
 
-            IEnumerable<FavoriteView> favoriteViewModels = await this.dbContext.Favorites
-                .Where(x => x.UserId.ToString().ToLower() == userId.ToLower())
-                .Select(x => new FavoriteView()
-                {
-                    Id = x.Id.ToString(),
-                    Name = x.Name,
-                    Importance = x.Importance,
-                })
-                .ToArrayAsync();
+            IEnumerable<FavoriteView> favoriteViewModels = await favoriteService.IndexGetAllFavoritesAsync(userId);
 
             return this.View(favoriteViewModels);
         }
@@ -157,7 +148,8 @@ namespace RealEstateApp.Web.Controllers
                     Id = x.Id.ToString(),
                     Name = x.Name,
                     IsSelected = x.FavoriteProperties!.Any(x => x.Property.Id == propIdGuid && x.IsDeleted == false),
-                }).ToArrayAsync()
+                })
+                .ToArrayAsync()
             };
 
             return this.View(propAddToFavModel);

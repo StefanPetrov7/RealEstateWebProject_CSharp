@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Data.DataServices.Contracts;
 using RealEstateApp.Data.Models;
-
+using RealEstateApp.Data.Repository.Contracts;
+using RealEstateApp.Web.ViewModels.Property;
 using static RealEstateApp.Common.AppConstants;
 
 namespace RealEstateApp.Data.DataServices
@@ -9,9 +10,12 @@ namespace RealEstateApp.Data.DataServices
     public class PropertyService : IPropertyService
     {
         private readonly ApplicationDbContext dbContext;
-        public PropertyService(ApplicationDbContext dbContext)
+        private readonly IRepository<Property, Guid> propertyRepository;
+
+        public PropertyService(ApplicationDbContext dbContext, IRepository<Property, Guid> repository)
         {
             this.dbContext = dbContext;
+            this.propertyRepository = repository;
         }
 
         public async Task<bool> HasPropertyBeenAdded()
@@ -75,6 +79,50 @@ namespace RealEstateApp.Data.DataServices
                 await transaction.RollbackAsync();
                 throw new InvalidOperationException($"DB Add Property Transaction failed:  {ex.Message}");
             }
+        }
+
+        public async Task<PropertyViewModel> GetPropertyDetailsByIdAsync(Guid Id)
+        {
+            PropertyViewModel? property = await this.propertyRepository.GetAllAttached()
+                .Where(x => x.Id == Id)
+                .Select(x => new PropertyViewModel
+                {
+                   Name = x.PropertyType!.Name,
+                   BuildingType = x.BuildingType!.Name,
+                   DistrictName = x.District!.Name,
+                   Floor = x.Floor,
+                   TotalFloors = x.TotalFloors,
+                   Price = x.Price,
+                   Size = x.Size,
+                   YardSize = x.YardSize,
+                   Year = x.Year,
+                   DateAdded = x.DateAdded,
+                   ImageUrl = x.ImageUrl,
+                })
+             .FirstOrDefaultAsync();
+
+            return property!;
+        }
+
+        public async Task<IEnumerable<PropertyViewModel>> IndexGetAllPropertiesAsync()
+        {
+            IEnumerable<PropertyViewModel> allProperties = await propertyRepository.GetAllAttached()
+                   .Select(x => new PropertyViewModel
+                   {
+                       Id = x.Id.ToString(),
+                       Name = x.PropertyType!.Name,
+                       BuildingType = x.BuildingType!.Name,
+                       DistrictName = x.District!.Name,
+                       Floor = x.Floor,
+                       Price = x.Price,
+                       Size = x.Size,
+                       Year = x.Year,
+                       DateAdded = x.DateAdded,
+                       ImageUrl = x.ImageUrl,
+                   })
+                    .ToArrayAsync();
+
+            return allProperties;
         }
     }
 }
