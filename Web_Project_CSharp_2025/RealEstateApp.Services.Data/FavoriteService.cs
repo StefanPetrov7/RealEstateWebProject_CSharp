@@ -19,6 +19,7 @@ namespace RealEstateApp.Data.DataServices
             this.favoriteRepository = favRepo;
             this.userManager = userManager;
         }
+
         public async Task AddFavorite(string name, Guid userId, int? importance = null)
         {
             Favorite favorite = new Favorite()
@@ -48,3 +49,4 @@ namespace RealEstateApp.Data.DataServices
         }
     }
 }
+ 
