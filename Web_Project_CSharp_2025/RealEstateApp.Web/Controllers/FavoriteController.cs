@@ -78,6 +78,7 @@ namespace RealEstateApp.Web.Controllers
                 .ThenInclude(x => x.Property)
                 .Select(x => new FavoritePropertyViewModel()
                 {
+                    Id = x.Id,
                     Name = x.Name,
                     Properties = x.FavoriteProperties!
                     .Where(x => x.IsDeleted == false)
@@ -235,11 +236,12 @@ namespace RealEstateApp.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveFromFavorites(string propId)
+        public async Task<IActionResult> RemoveFromFavorites(string propId, string favoriteId)
         {
             bool isPropGuidValid = this.validationService.IsValidGuid(propId, out Guid validPropId);
+            bool isFavGuidValid = this.validationService.IsValidGuid(favoriteId, out Guid validFavoriteId);
 
-            if (isPropGuidValid == false)
+            if (isPropGuidValid == false || isFavGuidValid == false)
             {
                 return this.RedirectToAction(nameof(Index));
             }
@@ -253,14 +255,9 @@ namespace RealEstateApp.Web.Controllers
 
             Guid userId = Guid.Parse(this.userManager.GetUserId(User)!);
 
-            Favorite? favorite = await this.dbContext.Favorites.Where(x => x.UserId == userId).FirstOrDefaultAsync()!;
-
-            if (favorite == null)
-            {
-                return this.RedirectToAction(nameof(Details));
-            }
-
-            PropertyFavorite? propFav = await this.dbContext.PropertyFavorites.FirstOrDefaultAsync(x => x.PropertyId == validPropId && x.FavoriteId == favorite.Id);
+            PropertyFavorite? propFav = await this.dbContext.PropertyFavorites
+                .Include(x => x.Favorite)
+                .FirstOrDefaultAsync(x => x.PropertyId == validPropId && x.Favorite.UserId == userId && x.FavoriteId == validFavoriteId);
 
             if (propFav == null)
             {
@@ -270,7 +267,7 @@ namespace RealEstateApp.Web.Controllers
             propFav.IsDeleted = true;
 
             await this.dbContext.SaveChangesAsync();
-            return this.RedirectToAction(nameof(Index));
+            return this.RedirectToAction(nameof(Details), new { id = favoriteId });
 
         }
     }

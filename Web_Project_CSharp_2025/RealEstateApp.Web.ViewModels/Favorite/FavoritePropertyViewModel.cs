@@ -9,6 +9,8 @@ namespace RealEstateApp.Web.ViewModels.Favorite
             this.Properties = new HashSet<PropertyViewModel>();
         }
 
+        public Guid Id   { get; set; }
+
         public string Name { get; set; } = null!;
 
         public ICollection<PropertyViewModel> Properties { get; set; }
