@@ -3,7 +3,7 @@
 
 <h2>Add a New Property</h2>
 
-<form asp-action="Create" method="post">
+<form asp-controller="Property" asp-action="Create" method="post">
     <div>
         <label asp-for="PropertyType">Property Type</label>
         <input asp-for="PropertyType" class="form-control" />
@@ -55,8 +55,11 @@
         <span asp-validation-for="ImageUrl" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary mt-2">Create Property</button>
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Create Property and Save</button>
+        <a asp-action="Index" class="btn btn-primary">Back to Property List</a>
+    </div>
 </form>
 
-<a asp-action="Index">Back to Property List</a>
+
 

@@ -23,7 +23,7 @@ namespace RealEstateApp.Data.DataServices
             return await this.dbContext.Properties.AnyAsync(); ;
         }
 
-        public async Task AddProperty(string district, int floor, int totalFloor, int size, int? yardSize, int? year, string propertyType, string buildingType, int? price, string imageUrl = null)
+        public async Task AddPropertyAsync(string district, int floor, int totalFloor, int size, int? yardSize, int? year, string propertyType, string buildingType, int? price, string imageUrl = null)
         {
 
             var property = new Property
@@ -89,7 +89,7 @@ namespace RealEstateApp.Data.DataServices
                 {
                    Name = x.PropertyType!.Name,
                    BuildingType = x.BuildingType!.Name,
-                   DistrictName = x.District!.Name,
+                   DistrictName = x.District!.Name,    
                    Floor = x.Floor,
                    TotalFloors = x.TotalFloors,
                    Price = x.Price,

@@ -10,15 +10,15 @@ namespace RealEstateApp.Data.DataServices
     {
         string propertyAppartementsString = "D:\\Git\\RealEstateWebProject_CSharp\\Web_Project_CSharp_2025\\RealEstateApp.Data\\JsonImportData\\imot.bg-raw-data-2021-03-18.json";
 
-        private readonly IPropertyService service;
+        private readonly IPropertyService propertyService;
         public SeedService(IPropertyService service)
         {
-            this.service = service;
+            this.propertyService = service;
         }
 
         public async Task RunSeed()
         {
-            if (await this.service.HasPropertyBeenAdded())
+            if (await this.propertyService.HasPropertyBeenAdded())
             {
                 return;
             }
@@ -33,11 +33,12 @@ namespace RealEstateApp.Data.DataServices
             {
                 throw new FileNotFoundException("Json path to folder is not correct.");
             }
+
             var jsonProperties = JsonSerializer.Deserialize<IEnumerable<JsonImportModel>>(File.ReadAllText(fileLocation))!;
 
             foreach (var prop in jsonProperties)
             {
-                await this.service.AddProperty(prop.District, prop.Floor, prop.TotalFloor, prop.Size, prop.YardSize, prop.Year, prop.Type, prop.BuildingType, prop.Price);
+                await this.propertyService.AddPropertyAsync(prop.District, prop.Floor, prop.TotalFloor, prop.Size, prop.YardSize, prop.Year, prop.Type, prop.BuildingType, prop.Price);
                 Console.Write(".");
             }
         }

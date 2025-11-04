@@ -12,6 +12,8 @@ namespace RealEstateApp.Web.Controllers
 {
     public class PropertyController : Controller
     {
+        // DB context / favoriteService / userManager > not used for now!!!!
+
         private readonly ApplicationDbContext dbContext;
         private readonly IPropertyService propertyService;
         private readonly IValidationService validationService;
@@ -47,6 +49,7 @@ namespace RealEstateApp.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(PropertyAddFormInputModel propModel)
         {
+            // TODO >> Implement Logger for errors 
             //  this.ModelState.IsValid >> will validate the data annotations in the PropertyAddForm
             if (this.ModelState.IsValid == false)
             {
@@ -55,7 +58,7 @@ namespace RealEstateApp.Web.Controllers
             }
 
             await this.propertyService
-                 .AddProperty
+                 .AddPropertyAsync
                  (
                      propModel.District,
                      (byte)propModel.Floor!,
@@ -75,6 +78,8 @@ namespace RealEstateApp.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(string id)
         {
+            // TODO >> Implement Logger for errors 
+
             bool isIdValid = this.validationService.IsValidGuid(id, out Guid idValid);
 
             if (isIdValid == false)
