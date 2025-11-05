@@ -46,7 +46,7 @@
 
                     @if (User?.Identity?.IsAuthenticated ?? false)
                     {
-                        <a asp-controller="Favorite" asp-action="AddToFavorites" asp-route-id="@property.Id" class="btn btn-warning">Add to Favorites</a>
+                        <a asp-controller="Favorite" asp-action="AddPropertyToFavorites" asp-route-id="@property.Id" class="btn btn-warning">Add to Favorites</a>
                     }
                 </td>
             </tr>

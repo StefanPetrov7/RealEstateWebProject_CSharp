@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 using RealEstateApp.Data;
 using RealEstateApp.Data.DataServices.Contracts;
 using RealEstateApp.Data.Models;
@@ -106,7 +105,7 @@ namespace RealEstateApp.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddToFavorites(string id)
+        public async Task<IActionResult> AddPropertyToFavorites(string id)
         {
             if (this.validationService.IsValidGuid(id, out Guid propIdGuid) == false)
             {
@@ -157,7 +156,7 @@ namespace RealEstateApp.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToFavorites(PropertyAddToFavoritesModel propAddToFavModel)
+        public async Task<IActionResult> AddPropertyToFavorites(PropertyAddToFavoritesModel propAddToFavModel)
         {
 
             if (this.ModelState.IsValid == false)
@@ -172,71 +171,34 @@ namespace RealEstateApp.Web.Controllers
                 return this.RedirectToAction(nameof(Index));
             }
 
-            Property? property = await this.dbContext.Properties.FirstOrDefaultAsync(x => x.Id == validPropId);
+            bool propertyExists = await this.dbContext.Properties.AnyAsync(x => x.Id == validPropId);
 
-            if (property == null)
+            if (propertyExists == false)
             {
                 return this.RedirectToAction(nameof(Index));
             }
 
-            ICollection<PropertyFavorite> entitiesToAdd = new List<PropertyFavorite>();
+            var favoritesIds = new List<Guid>();
 
-            foreach (FavoriteCheckBoxInputModel favCheckBoxInputModel in propAddToFavModel.Favorites)
+            foreach (FavoriteCheckBoxInputModel selectedFavorite in propAddToFavModel.Favorites)
             {
-
-                bool isFavGuidValid = this.validationService.IsValidGuid(favCheckBoxInputModel.Id, out Guid validFavGuid);
-
-                if (isFavGuidValid == false)
+                if (selectedFavorite.IsSelected == true && this.validationService.IsValidGuid(selectedFavorite.Id, out Guid validId))
                 {
-                    continue;
+                    favoritesIds.Add(validId);
                 }
-
-                Favorite? favorite = await this.dbContext.Favorites.FirstOrDefaultAsync(x => x.Id == validFavGuid);
-
-                if (favorite == null)
-                {
-                    return this.RedirectToAction(nameof(Index));
-                }
-
-                PropertyFavorite? propFav = await this.dbContext.PropertyFavorites.FirstOrDefaultAsync(x => x.PropertyId == validPropId && x.FavoriteId == validFavGuid);
-
-                if (favCheckBoxInputModel.IsSelected == true)
-                {
-                    if (propFav == null)
-                    {
-                        PropertyFavorite propFavModel = new PropertyFavorite()
-                        {
-                            PropertyId = validPropId,
-                            FavoriteId = validFavGuid,
-                        };
-
-                        entitiesToAdd.Add(propFavModel);
-                    }
-                    else
-                    {
-                        propFav.IsDeleted = false;
-                    }
-                }
-                else
-                {
-                    if (propFav != null)
-                    {
-                        propFav.IsDeleted = true;
-                    }
-
-                }
-
-                await this.dbContext.SaveChangesAsync();
             }
 
-            await this.dbContext.PropertyFavorites.AddRangeAsync(entitiesToAdd);
-            await this.dbContext.SaveChangesAsync();
+            if (await this.favoriteService.AddPropertyToFavoritesAsync(validPropId, favoritesIds) == false)
+            {
+                return this.RedirectToAction(nameof(Index));
+            }
+
             return this.RedirectToAction(nameof(Index));
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveFromFavorites(string propId, string favoriteId)
+        public async Task<IActionResult> RemovePropertyFromFavorites(string propId, string favoriteId)
         {
             bool isPropGuidValid = this.validationService.IsValidGuid(propId, out Guid validPropId);
             bool isFavGuidValid = this.validationService.IsValidGuid(favoriteId, out Guid validFavoriteId);
@@ -269,6 +231,26 @@ namespace RealEstateApp.Web.Controllers
             await this.dbContext.SaveChangesAsync();
             return this.RedirectToAction(nameof(Details), new { id = favoriteId });
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteFavorite(string id)
+        {
+            bool isFavoriteIdValid = this.validationService.IsValidGuid(id, out Guid favoriteId);
+
+            if (isFavoriteIdValid == false)
+            {
+                return this.RedirectToAction(nameof(Index));
+            }
+
+            var isDeleted = await this.favoriteService.SoftDeleteFavoriteAsync(favoriteId);
+
+            if (isDeleted == false) 
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(Index)); 
         }
     }
 }

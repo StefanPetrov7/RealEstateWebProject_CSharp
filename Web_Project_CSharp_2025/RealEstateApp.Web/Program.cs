@@ -38,7 +38,9 @@ namespace RealEstateApp.Web
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddRoles<IdentityRole<Guid>>()
                 .AddSignInManager<SignInManager<ApplicationUser>>()
-                .AddUserManager<UserManager<ApplicationUser>>();
+                .AddUserManager<UserManager<ApplicationUser>>()
+                .AddDefaultUI()
+                .AddDefaultTokenProviders();
 
             builder.Services.ConfigureApplicationCookie(cfg =>
             {

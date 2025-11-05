@@ -22,6 +22,8 @@ namespace RealEstateApp.Data.Configuration
              .WithMany(x => x.FavoriteProperties)
              .IsRequired(true)
              .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasQueryFilter(x => x.IsDeleted == false && x.Favorite.IsDeleted == false);
         }
     }
 }

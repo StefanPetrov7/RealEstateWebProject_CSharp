@@ -5,6 +5,8 @@ using RealEstateApp.Data.DataServices.Contracts;
 using RealEstateApp.Data.Models;
 using RealEstateApp.Data.Repository.Contracts;
 using RealEstateApp.Web.ViewModels.Favorite;
+using RealEstateApp.Web.ViewModels.Property;
+using System.Reflection.Metadata.Ecma335;
 
 namespace RealEstateApp.Data.DataServices
 {
@@ -13,11 +15,13 @@ namespace RealEstateApp.Data.DataServices
         private readonly ApplicationDbContext dbContext;
         private readonly IRepository<Favorite, Guid> favoriteRepository;
         private readonly UserManager<ApplicationUser> userManager;
-        public FavoriteService(ApplicationDbContext dbContext, IRepository<Favorite, Guid> favRepo, UserManager<ApplicationUser> userManager)
+        private readonly IValidationService validationService;
+        public FavoriteService(ApplicationDbContext dbContext, IRepository<Favorite, Guid> favRepo, UserManager<ApplicationUser> userManager, IValidationService validationService)
         {
             this.dbContext = dbContext;
             this.favoriteRepository = favRepo;
             this.userManager = userManager;
+            this.validationService = validationService;
         }
 
         public async Task AddFavorite(string name, Guid userId, int? importance = null)
@@ -32,6 +36,7 @@ namespace RealEstateApp.Data.DataServices
             await this.favoriteRepository.AddAsync(favorite);
         }
 
+        // TODO Filter by IsDeleted 
         public async Task<IEnumerable<FavoriteView>> IndexGetAllFavoritesAsync(string userId)
         {
 
@@ -45,7 +50,72 @@ namespace RealEstateApp.Data.DataServices
                  })
                  .ToArrayAsync();
 
-            return favoriteViewModels;  
+            return favoriteViewModels;
+        }
+
+        public async Task<bool> AddPropertyToFavoritesAsync(Guid propertyId, IEnumerable<Guid> favoriteIds)
+        {
+
+            bool propertyExists = await this.dbContext.Properties.AnyAsync(x => x.Id == propertyId);
+
+            if (propertyExists == false)
+            {
+                return false;
+            }
+
+            ICollection<PropertyFavorite> entitiesToAdd = new List<PropertyFavorite>();
+
+            foreach (Guid favoriteId in favoriteIds)
+            {
+
+                bool favoriteExists = await this.dbContext.Favorites.AnyAsync(x => x.Id == favoriteId);
+
+                if (favoriteExists == false)
+                {
+                    continue;
+                }
+
+                PropertyFavorite? propFav = await this.dbContext.PropertyFavorites.FirstOrDefaultAsync(x => x.PropertyId == propertyId && x.FavoriteId == favoriteId);
+
+                if (propFav == null)
+                {
+                    PropertyFavorite propFavModel = new PropertyFavorite()
+                    {
+                        PropertyId = propertyId,
+                        FavoriteId = favoriteId,
+                        IsDeleted = false,
+                    };
+
+                    entitiesToAdd.Add(propFavModel);
+                }
+                else
+                {
+                    propFav.IsDeleted = false;
+                }
+            }
+
+            if (entitiesToAdd.Any())
+            {
+                await this.dbContext.PropertyFavorites.AddRangeAsync(entitiesToAdd);
+            }
+
+            await this.dbContext.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> SoftDeleteFavoriteAsync(Guid id)
+        {
+            Favorite? favoriteToDelete = await this.dbContext.Favorites.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (favoriteToDelete == null) 
+            { 
+                return false;
+            }
+
+            favoriteToDelete.IsDeleted = true;
+            await this.dbContext.SaveChangesAsync();    
+            return true;
         }
     }
+
 }

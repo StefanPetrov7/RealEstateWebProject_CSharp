@@ -23,6 +23,8 @@ namespace RealEstateApp.Data.Models
 
         public int? Importance { get; set; }
 
+        public bool IsDeleted { get; set; } 
+
         [InverseProperty(nameof(PropertyFavorite.Favorite))]
         public virtual ICollection<PropertyFavorite>? FavoriteProperties { get; set; }
 
@@ -32,3 +34,4 @@ namespace RealEstateApp.Data.Models
         public virtual ApplicationUser User { get; set; } = null!;
     }
 }
+ 

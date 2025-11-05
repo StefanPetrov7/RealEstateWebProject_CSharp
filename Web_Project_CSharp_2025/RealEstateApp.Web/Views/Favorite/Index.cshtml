@@ -7,7 +7,6 @@
 
 <h2>Favorite Selection</h2>
 
-<!-- Button to add a new tag -->
 <a asp-action="Create" class="btn btn-success mb-4">Create Favorite</a>
 
 <div class="row">
@@ -18,9 +17,39 @@
                 <img src="~/Images/Favorites.jpg" class="card-img-top" alt="Cinema Image" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
                     <h5 class="card-title">@favorite.Name</h5>
+
                     <a asp-action="Details" asp-route-id="@favorite.Id" class="btn btn-primary">Details</a>
+
+                    <form asp-action="DeleteFavorite" asp-route-id="@favorite.Id" method="post" class="d-inline delete-form">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </div>
             </div>
         </div>
     }
 </div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.querySelectorAll('.delete-form').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This will delete the favorite.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>

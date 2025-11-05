@@ -50,7 +50,7 @@
                     <td>
                         <a asp-action="Details" asp-controller="Favorite" asp-route-id="@Model.Id" class="btn btn-primary d-inline">Details</a>
 
-                        <form asp-controller="Favorite" asp-action="RemoveFromFavorites" method="post" class="d-inline">
+                        <form asp-controller="Favorite" asp-action="RemovePropertyFromFavorites" method="post" class="d-inline">
                             <input type="hidden" name="propId" value="@property.Id" />
                             <input type="hidden" name="favoriteId" value="@Model.Id" />
                             <button type="submit" class="btn btn-danger">Remove</button>

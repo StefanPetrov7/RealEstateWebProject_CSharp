@@ -258,6 +258,9 @@ namespace RealEstateApp.Data.Migrations
                     b.Property<int?>("Importance")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

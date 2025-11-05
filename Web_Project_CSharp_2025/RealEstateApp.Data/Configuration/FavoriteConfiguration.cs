@@ -14,6 +14,8 @@ namespace RealEstateApp.Data.Configuration
                 .WithMany(x => x.Favorites)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasQueryFilter(x => x.IsDeleted == false);
         }
     }
 }

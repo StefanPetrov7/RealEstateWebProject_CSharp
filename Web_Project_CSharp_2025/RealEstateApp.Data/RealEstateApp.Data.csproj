@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Folder Include="JsonImportData\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
