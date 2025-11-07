@@ -1,12 +1,12 @@
 using System.Diagnostics;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using RealEstateApp.Web.ViewModels;
 
 namespace RealEstateApp.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
 
         public HomeController()
@@ -14,6 +14,7 @@ namespace RealEstateApp.Web.Controllers
             
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
             ViewData["Title"] = "Home Page";

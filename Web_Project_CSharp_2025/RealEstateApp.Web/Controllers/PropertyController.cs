@@ -7,10 +7,11 @@ using RealEstateApp.Data.Models;
 using RealEstateApp.Web.ViewModels.Property;
 using RealEstateApp.Web.ViewModels.Favorite;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RealEstateApp.Web.Controllers
 {
-    public class PropertyController : Controller
+    public class PropertyController : BaseController
     {
         // DB context / favoriteService / userManager > not used for now!!!!
 
@@ -29,6 +30,7 @@ namespace RealEstateApp.Web.Controllers
             this.userManager = userManager;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -75,6 +77,7 @@ namespace RealEstateApp.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Details(string id)
         {

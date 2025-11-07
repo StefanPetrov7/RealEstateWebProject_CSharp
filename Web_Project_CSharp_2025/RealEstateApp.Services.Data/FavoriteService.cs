@@ -75,7 +75,9 @@ namespace RealEstateApp.Data.DataServices
                     continue;
                 }
 
-                PropertyFavorite? propFav = await this.dbContext.PropertyFavorites.FirstOrDefaultAsync(x => x.PropertyId == propertyId && x.FavoriteId == favoriteId);
+                PropertyFavorite? propFav = await this.dbContext.PropertyFavorites
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(x => x.PropertyId == propertyId && x.FavoriteId == favoriteId);
 
                 if (propFav == null)
                 {
@@ -86,17 +88,16 @@ namespace RealEstateApp.Data.DataServices
                         IsDeleted = false,
                     };
 
-                    entitiesToAdd.Add(propFavModel);
+                    await this.dbContext.PropertyFavorites.AddAsync(propFavModel);
+
                 }
                 else
                 {
-                    propFav.IsDeleted = false;
+                    if (propFav.IsDeleted)
+                    {
+                        propFav.IsDeleted = false;
+                    }
                 }
-            }
-
-            if (entitiesToAdd.Any())
-            {
-                await this.dbContext.PropertyFavorites.AddRangeAsync(entitiesToAdd);
             }
 
             await this.dbContext.SaveChangesAsync();

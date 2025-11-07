@@ -10,8 +10,7 @@ using RealEstateApp.Web.ViewModels.Property;
 
 namespace RealEstateApp.Web.Controllers
 {
-    [Authorize]
-    public class FavoriteController : Controller
+    public class FavoriteController : BaseController
     {
         private readonly ApplicationDbContext dbContext;
         private readonly UserManager<ApplicationUser> userManager;
@@ -26,9 +25,15 @@ namespace RealEstateApp.Web.Controllers
             this.userManager = userManager;
         }
 
+     
         public async Task<IActionResult> Index()
         {
             string userId = this.userManager.GetUserId(this.User)!;
+
+            if (userId == null)
+            {
+                return this.Forbid();
+            }
 
             IEnumerable<FavoriteView> favoriteViewModels = await favoriteService.IndexGetAllFavoritesAsync(userId);
 
@@ -54,7 +59,7 @@ namespace RealEstateApp.Web.Controllers
 
             if (string.IsNullOrEmpty(userIdString))
             {
-                return Unauthorized();
+                return Forbid();
             }
 
             var userId = Guid.Parse(userIdString);
@@ -63,6 +68,7 @@ namespace RealEstateApp.Web.Controllers
             return this.RedirectToAction(nameof(Index));
         }
 
+    
         [HttpGet]
         public async Task<IActionResult> Details(string? id)
         {
@@ -107,6 +113,7 @@ namespace RealEstateApp.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AddPropertyToFavorites(string id)
         {
+
             if (this.validationService.IsValidGuid(id, out Guid propIdGuid) == false)
             {
                 return RedirectToAction(nameof(Index));
@@ -245,12 +252,12 @@ namespace RealEstateApp.Web.Controllers
 
             var isDeleted = await this.favoriteService.SoftDeleteFavoriteAsync(favoriteId);
 
-            if (isDeleted == false) 
+            if (isDeleted == false)
             {
                 return NotFound();
             }
 
-            return RedirectToAction(nameof(Index)); 
+            return RedirectToAction(nameof(Index));
         }
     }
 }
