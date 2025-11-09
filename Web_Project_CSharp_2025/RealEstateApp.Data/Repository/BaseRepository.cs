@@ -1,89 +1,134 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Identity.Client;
+using RealEstateApp.Common;
 using RealEstateApp.Data.Repository.Contracts;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Security.Cryptography;
 
 namespace RealEstateApp.Data.Repository
 {
-    public class BaseRepository<TType, TId> : IRepository<TType, TId>
-        where TType : class
+    public class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey>
+        where TEntity : class
     {
 
         private readonly ApplicationDbContext context;
-        private readonly DbSet<TType> dbSet;
+        private readonly DbSet<TEntity> dbSet;
 
         public BaseRepository(ApplicationDbContext context)
         {
             this.context = context;
-            this.dbSet = context.Set<TType>();
+            this.dbSet = context.Set<TEntity>();
         }
 
-        public void Add(TType item)
+        public TEntity? GetById(TKey id)
         {
-            this.dbSet.Add(item);   
-            this.context.SaveChanges(); 
+            TEntity? entity = dbSet.Find(id);
+            return entity;
         }
 
-        public async Task AddAsync(TType item)
+        public async Task<TEntity?> GetByIdAsync(TKey id)
+        {
+            TEntity? entity = await dbSet.FindAsync(id);
+            return entity;
+        }
+
+        public TEntity? SingleOrDefault(Func<TEntity, bool> predicate)
+        {
+            TEntity? entity = this.dbSet.SingleOrDefault(predicate);
+            return entity;
+        }
+
+        public async Task<TEntity?> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            TEntity? entity = await this.dbSet.SingleOrDefaultAsync(predicate);
+            return entity;
+        }
+
+        public TEntity? FirstOrDefault(Func<TEntity, bool> predicate)
+        {
+            TEntity? entity = this.dbSet.FirstOrDefault(predicate);
+            return entity;
+        }
+
+        public async Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            TEntity? entity = await this.dbSet.FirstOrDefaultAsync(predicate);
+            return entity;
+        }
+
+        public IEnumerable<TEntity> GetAll()
+        {
+            TEntity[] entities = this.dbSet.ToArray();
+            return entities;
+        }
+
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        {
+            TEntity[] entities = await this.dbSet.ToArrayAsync();
+            return entities;
+        }
+
+        public IQueryable<TEntity> GetAllAttached()
+        {
+            IQueryable<TEntity>? entities = this.dbSet.AsQueryable();
+            return entities;
+        }
+
+        public void Add(TEntity item)
+        {
+            this.dbSet.Add(item);
+            this.context.SaveChanges();
+        }
+
+        public async Task AddAsync(TEntity item)
         {
             await this.dbSet.AddAsync(item);
             await this.context.SaveChangesAsync();
         }
 
-        public bool Delete(TId id)
+        public void AddRange(IEnumerable<TEntity> items)
         {
-            TType entity = this.GetById(id);
-
-            if (entity == null)
-            {
-                return false;
-            }
-
-            this.dbSet.Remove(entity);
+            this.dbSet.AddRange(items);
             this.context.SaveChanges();
-            return true;    
         }
 
-        public async Task<bool> DeleteAsync(TId id)
+        public async Task AddRangeAsync(IEnumerable<TEntity> items)
         {
-            TType entity = await this.GetByIdAsync(id);
-
-            if (entity == null)
-            {
-                return false;
-            }
-
-            this.dbSet.Remove(entity);
+            await this.dbSet.AddRangeAsync(items);
             await this.context.SaveChangesAsync();
-            return true;
         }
 
-        public IEnumerable<TType> GetAll()
+        // Soft Delete > IsDelete set to true >> using private methods to find the IsDeleted property for that entity 
+        public bool Delete(TEntity entity)
         {
-            return this.dbSet.ToArray();
+            this.PerformSoftDelete(entity);
+            return this.Update(entity);
         }
 
-        public async Task<IEnumerable<TType>> GetAllAsync()
+        // Soft Delete async > IsDelete set to true >> using private methods to find the IsDeleted property for that entity 
+        public async Task<bool> DeleteAsync(TEntity entity)
         {
-            return await this.dbSet.ToArrayAsync();
+            this.PerformSoftDelete(entity);
+            return await this.UpdateAsync(entity);
         }
 
-        public IQueryable<TType> GetAllAttached()
+        public bool HardDelete(TEntity entity)
         {
-            return this.dbSet.AsQueryable();
+            this.dbSet.Remove(entity);
+            int updateCount = this.context.SaveChanges();
+            return updateCount > 0;
         }
 
-        public TType GetById(TId id)
+        public async Task<bool> HardDeleteAsync(TEntity entity)
         {
-            TType entity = dbSet.Find(id);
-            return entity; 
+            this.dbSet.Remove(entity);
+            int updateCount = await this.context.SaveChangesAsync();
+            return updateCount > 0;
         }
 
-        public async Task<TType> GetByIdAsync(TId id)
-        {
-            TType entity = await dbSet.FindAsync(id);
-            return entity;
-        }
-
-        public bool Update(TType item)
+        public bool Update(TEntity item)
         {
             try
             {
@@ -98,7 +143,7 @@ namespace RealEstateApp.Data.Repository
             }
         }
 
-        public async Task<bool> UpdateAsync(TType item)
+        public async Task<bool> UpdateAsync(TEntity item)
         {
             try
             {
@@ -111,6 +156,64 @@ namespace RealEstateApp.Data.Repository
             {
                 return false;
             }
+        }
+
+        public bool Any()
+        {
+            return this.dbSet.Any();
+        }
+
+        public Task<bool> AnyAsync()
+        {
+            return this.dbSet.AnyAsync();
+        }
+
+        public async Task ExecuteInTransactionAsync(TEntity entity) 
+        { 
+           using var transaction = await this.context.Database.BeginTransactionAsync();
+
+            try
+            {
+                await this.dbSet.AddAsync(entity);
+                await this.context.SaveChangesAsync();  
+                await transaction.CommitAsync();   
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new InvalidOperationException(String.Format(ExceptionMessages.DatabaseTransactionFailed, ex.Message));
+            }
+        }
+
+        public void SaveChanges()
+        {
+            this.context.SaveChanges();
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await this.context.SaveChangesAsync();
+        }
+
+        // Below private methods are using Reflection to check if the properties which we are trying to delete has IsDelete property and if YES it is set to true;
+        // Used for the Delete methods.
+        private void PerformSoftDelete(TEntity entity)
+        {
+            PropertyInfo? isDeletedProperty = this.GetIsDeletedProperty(entity);
+
+            if (isDeletedProperty == null)
+            {
+                throw new InvalidOperationException(ExceptionMessages.SoftDelete);
+            }
+
+            isDeletedProperty.SetValue(entity, true);
+        }
+
+        private PropertyInfo? GetIsDeletedProperty(TEntity entity)
+        {
+            return typeof(TEntity)
+                .GetProperties()
+                .FirstOrDefault(x => x.PropertyType == typeof(bool) && x.Name == AppConstants.IsDeletedPropertyName);
         }
     }
 }

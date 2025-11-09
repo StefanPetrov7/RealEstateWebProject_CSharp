@@ -63,8 +63,8 @@ namespace RealEstateApp.Web.Controllers
                  .AddPropertyAsync
                  (
                      propModel.District,
-                     (byte)propModel.Floor!,
-                     (byte)propModel.TotalFloors!,
+                     propModel.Floor,
+                     propModel.TotalFloors,
                      propModel.Size,
                      propModel.YardSize,
                      propModel.Year,

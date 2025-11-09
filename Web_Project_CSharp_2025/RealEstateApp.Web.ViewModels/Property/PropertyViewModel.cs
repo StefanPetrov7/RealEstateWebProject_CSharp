@@ -10,9 +10,9 @@
 
         public string DistrictName { get; set; } = null!;
 
-        public int? Floor { get; set; }
+        public byte? Floor { get; set; }
 
-        public int? TotalFloors { get; set; }
+        public byte? TotalFloors { get; set; }
 
         public int Size { get; set; }
 

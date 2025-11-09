@@ -12,9 +12,9 @@ namespace RealEstateApp.Data.ImportModels
 
         public int YardSize { get; set; }
 
-        public int Floor { get; set; }
+        public byte? Floor { get; set; }
 
-        public int TotalFloor { get; set; }
+        public byte? TotalFloor { get; set; }
 
         public string District { get; set; } = null!;
 

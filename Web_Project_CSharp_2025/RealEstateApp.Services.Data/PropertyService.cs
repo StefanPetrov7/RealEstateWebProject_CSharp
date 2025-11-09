@@ -9,21 +9,34 @@ namespace RealEstateApp.Data.DataServices
 {
     public class PropertyService : IPropertyService
     {
-        private readonly ApplicationDbContext dbContext;
+        // Below code can be removed if the Repository behavior is ok. 
+        // Context will be used by the repository >> Services / Controllers will work with the Repo, Repo will work with the Context.
+        // Private readonly ApplicationDbContext dbContext;
         private readonly IRepository<Property, Guid> propertyRepository;
+        private readonly IRepository<District, Guid> districtRepository;
+        private readonly IRepository<BuildingType, Guid> buildingTypeRepository;
+        private readonly IRepository<PropertyType, Guid> propertyTypeRepository;
 
-        public PropertyService(ApplicationDbContext dbContext, IRepository<Property, Guid> repository)
+        public PropertyService(ApplicationDbContext dbContext, IRepository<Property, Guid> propRepo, IRepository<District, Guid> distRepo, IRepository<BuildingType, Guid> buildTypeRepo, IRepository<PropertyType, Guid> propTypeRepo)
         {
-            this.dbContext = dbContext;
-            this.propertyRepository = repository;
+            // Below code can be removed if the Repository behavior is ok. 
+            //this.dbContext = dbContext;
+            this.propertyRepository = propRepo;
+            this.districtRepository = distRepo;
+            this.buildingTypeRepository = buildTypeRepo;
+            this.propertyTypeRepository = propTypeRepo;
+
         }
 
+        // Below code can be removed if the Repository behavior is ok. 
+        // To use repository for this method. 
         public async Task<bool> HasPropertyBeenAdded()
         {
-            return await this.dbContext.Properties.AnyAsync(); ;
+            return await this.propertyRepository.AnyAsync();
+            //return await this.dbContext.Properties.AnyAsync(); 
         }
 
-        public async Task AddPropertyAsync(string district, int floor, int totalFloor, int size, int? yardSize, int? year, string propertyType, string buildingType, int? price, string imageUrl = null)
+        public async Task AddPropertyAsync(string district, byte? floor, byte? totalFloor, int size, int? yardSize, int? year, string propertyType, string buildingType, int? price, string imageUrl = null)
         {
 
             var property = new Property
@@ -32,15 +45,15 @@ namespace RealEstateApp.Data.DataServices
                 // Id = Guid.NewGuid(), 
                 Size = size,
                 Price = price <= 0 ? null : price,
-                Floor = floor <= 0 || floor >= 255 ? null : (byte)floor,
-                TotalFloors = totalFloor <= 0 || totalFloor >= 255 ? null : (byte)totalFloor,
+                Floor = floor <= 0 || floor >= 255 ? null : floor,
+                TotalFloors = totalFloor <= 0 || totalFloor >= 255 ? null : totalFloor,
                 YardSize = yardSize <= 0 ? null : yardSize,
                 Year = year <= 1800 ? null : year,
                 DateAdded = DateTime.Now,
                 ImageUrl = imageUrl ?? PropertyDefaultImageUrl,
             };
 
-            var dbDistrict = await dbContext.Districts.FirstOrDefaultAsync(x => x.Name == district);
+            var dbDistrict = await districtRepository.FirstOrDefaultAsync(x => x.Name == district);
 
             if (dbDistrict == null)
             {
@@ -49,7 +62,7 @@ namespace RealEstateApp.Data.DataServices
 
             property.District = dbDistrict;
 
-            var dbPropertyType = await dbContext.PropertyTypes.FirstOrDefaultAsync(x => x.Name == propertyType);
+            var dbPropertyType = await this.propertyTypeRepository.FirstOrDefaultAsync(x => x.Name == propertyType);
 
             if (dbPropertyType == null)
             {
@@ -58,7 +71,7 @@ namespace RealEstateApp.Data.DataServices
 
             property.PropertyType = dbPropertyType;
 
-            var dbBuildingType = await dbContext.BuildingTypes.FirstOrDefaultAsync(x => x.Name == buildingType);
+            var dbBuildingType = await this.buildingTypeRepository.FirstOrDefaultAsync(x => x.Name == buildingType);
 
             if (dbBuildingType == null)
             {
@@ -67,18 +80,20 @@ namespace RealEstateApp.Data.DataServices
 
             property.BuildingType = dbBuildingType;
 
-            using var transaction = await dbContext.Database.BeginTransactionAsync();
-            try
-            {
-                await dbContext.AddAsync(property);
-                await dbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                throw new InvalidOperationException($"DB Add Property Transaction failed:  {ex.Message}");
-            }
+            await this.propertyRepository.ExecuteInTransactionAsync(property);
+
+            // Below code can be removed if the Repository behavior is ok. 
+
+            //try
+            //{
+            //    await this.propertyRepository.AddAsync(property);
+            //    await transaction.CommitAsync();
+            //}
+            //catch (Exception ex)
+            //{
+            //    await transaction.RollbackAsync();
+            //    throw new InvalidOperationException($"DB Add Property Transaction failed:  {ex.Message}");
+            //}
         }
 
         public async Task<PropertyViewModel> GetPropertyDetailsByIdAsync(Guid Id)
@@ -87,17 +102,17 @@ namespace RealEstateApp.Data.DataServices
                 .Where(x => x.Id == Id)
                 .Select(x => new PropertyViewModel
                 {
-                   Name = x.PropertyType!.Name,
-                   BuildingType = x.BuildingType!.Name,
-                   DistrictName = x.District!.Name,    
-                   Floor = x.Floor,
-                   TotalFloors = x.TotalFloors,
-                   Price = x.Price,
-                   Size = x.Size,
-                   YardSize = x.YardSize,
-                   Year = x.Year,
-                   DateAdded = x.DateAdded,
-                   ImageUrl = x.ImageUrl,
+                    Name = x.PropertyType!.Name,
+                    BuildingType = x.BuildingType!.Name,
+                    DistrictName = x.District!.Name,
+                    Floor = x.Floor,
+                    TotalFloors = x.TotalFloors,
+                    Price = x.Price,
+                    Size = x.Size,
+                    YardSize = x.YardSize,
+                    Year = x.Year,
+                    DateAdded = x.DateAdded,
+                    ImageUrl = x.ImageUrl,
                 })
              .FirstOrDefaultAsync();
 

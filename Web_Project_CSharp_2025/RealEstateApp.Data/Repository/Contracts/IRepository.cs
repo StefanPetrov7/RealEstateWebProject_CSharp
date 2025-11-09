@@ -1,29 +1,56 @@
 ﻿
+using System.Linq.Expressions;
+
 namespace RealEstateApp.Data.Repository.Contracts
 {
-    public interface IRepository<TType, TId>
+    public interface IRepository<TEntity, TKey>
     {
-        TType GetById(TId id);
+        TEntity? GetById(TKey id);
 
-        Task<TType> GetByIdAsync(TId id);
+        Task<TEntity?> GetByIdAsync(TKey id);
 
-        IEnumerable<TType> GetAll();
+        TEntity? SingleOrDefault(Func<TEntity, bool> predicate);
 
-        Task<IEnumerable<TType>> GetAllAsync();
+        Task<TEntity?> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
 
-        IQueryable<TType> GetAllAttached();
+        TEntity? FirstOrDefault(Func<TEntity, bool> predicate);
 
-        void Add(TType item);
+        Task<TEntity?> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
 
-        Task AddAsync(TType item);
+        IEnumerable<TEntity> GetAll();
 
-        bool Delete(TId id);    
+        Task<IEnumerable<TEntity>> GetAllAsync();
 
-        Task<bool> DeleteAsync(TId id);
+        IQueryable<TEntity> GetAllAttached();
 
-        bool Update(TType item);
+        void Add(TEntity item);
 
-        Task<bool> UpdateAsync(TType item);
+        Task AddAsync(TEntity item);
+
+        void AddRange(IEnumerable<TEntity> items);
+
+        Task AddRangeAsync(IEnumerable<TEntity> items);
+
+        // Soft Delete
+        bool Delete(TEntity entity);
+
+        // Soft Delete async
+        Task<bool> DeleteAsync(TEntity entity);
+
+        bool HardDelete(TEntity entity);
+
+        Task<bool> HardDeleteAsync(TEntity entity);
+        bool Any();
+
+        Task<bool> AnyAsync();
+
+        Task ExecuteInTransactionAsync(TEntity entity);
+
+        bool Update(TEntity item);
+
+        Task<bool> UpdateAsync(TEntity item);
+        void SaveChanges();
+
+        Task SaveChangesAsync();
     }
 }
-     
