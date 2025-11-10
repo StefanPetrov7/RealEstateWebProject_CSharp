@@ -12,16 +12,23 @@ namespace RealEstateApp.Data.DataServices
 {
     public class FavoriteService : IFavoriteService
     {
-        private readonly ApplicationDbContext dbContext;
         private readonly IRepository<Favorite, Guid> favoriteRepository;
+        private readonly IRepository<Property, Guid> propertyRepository;
+        private readonly IRepository<PropertyFavorite, Guid> propFavRepository;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IValidationService validationService;
-        public FavoriteService(ApplicationDbContext dbContext, IRepository<Favorite, Guid> favRepo, UserManager<ApplicationUser> userManager, IValidationService validationService)
+        public FavoriteService(
+            IRepository<Favorite, Guid> favRepo,
+            UserManager<ApplicationUser> userManager,
+            IValidationService validationService,
+            IRepository<Property, Guid> propRepo,
+            IRepository<PropertyFavorite, Guid> propFavRepository)
         {
-            this.dbContext = dbContext;
             this.favoriteRepository = favRepo;
             this.userManager = userManager;
             this.validationService = validationService;
+            this.propertyRepository = propRepo;
+            this.propFavRepository = propFavRepository;
         }
 
         public async Task AddFavorite(string name, Guid userId, int? importance = null)
@@ -36,10 +43,8 @@ namespace RealEstateApp.Data.DataServices
             await this.favoriteRepository.AddAsync(favorite);
         }
 
-        // TODO Filter by IsDeleted 
         public async Task<IEnumerable<FavoriteView>> IndexGetAllFavoritesAsync(string userId)
         {
-
             IEnumerable<FavoriteView> favoriteViewModels = await this.favoriteRepository.GetAllAttached()
                  .Where(x => x.UserId.ToString().ToLower() == userId.ToLower())
                  .Select(x => new FavoriteView()
@@ -56,9 +61,9 @@ namespace RealEstateApp.Data.DataServices
         public async Task<bool> AddPropertyToFavoritesAsync(Guid propertyId, IEnumerable<Guid> favoriteIds)
         {
 
-            bool propertyExists = await this.dbContext.Properties.AnyAsync(x => x.Id == propertyId);
+            Property? propertyExists = await this.propertyRepository.GetByIdAsync(propertyId);
 
-            if (propertyExists == false)
+            if (propertyExists == null)
             {
                 return false;
             }
@@ -67,15 +72,15 @@ namespace RealEstateApp.Data.DataServices
 
             foreach (Guid favoriteId in favoriteIds)
             {
+                Favorite? favorite = await this.favoriteRepository.GetByIdAsync(favoriteId);
 
-                bool favoriteExists = await this.dbContext.Favorites.AnyAsync(x => x.Id == favoriteId);
-
-                if (favoriteExists == false)
+                if (favorite == null)
                 {
                     continue;
                 }
 
-                PropertyFavorite? propFav = await this.dbContext.PropertyFavorites
+                PropertyFavorite? propFav = await this.propFavRepository
+                    .GetAllAttached()
                     .IgnoreQueryFilters()
                     .FirstOrDefaultAsync(x => x.PropertyId == propertyId && x.FavoriteId == favoriteId);
 
@@ -88,35 +93,105 @@ namespace RealEstateApp.Data.DataServices
                         IsDeleted = false,
                     };
 
-                    await this.dbContext.PropertyFavorites.AddAsync(propFavModel);
-
+                    entitiesToAdd.Add(propFavModel);
                 }
-                else
+                else if (propFav.IsDeleted)
                 {
-                    if (propFav.IsDeleted)
-                    {
-                        propFav.IsDeleted = false;
-                    }
+                    propFav.IsDeleted = false;
+                    await propFavRepository.UpdateAsync(propFav);
                 }
             }
 
-            await this.dbContext.SaveChangesAsync();
+            if (entitiesToAdd.Any())
+            {
+                await this.propFavRepository.AddRangeAsync(entitiesToAdd);
+            }
+
             return true;
         }
 
         public async Task<bool> SoftDeleteFavoriteAsync(Guid id)
         {
-            Favorite? favoriteToDelete = await this.dbContext.Favorites.FirstOrDefaultAsync(x => x.Id == id);
+            Favorite? favoriteToDelete = await this.favoriteRepository.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (favoriteToDelete == null) 
-            { 
+            if (favoriteToDelete == null)
+            {
                 return false;
             }
 
-            favoriteToDelete.IsDeleted = true;
-            await this.dbContext.SaveChangesAsync();    
+            await this.favoriteRepository.DeleteAsync(favoriteToDelete);
             return true;
         }
-    }
 
+        public async Task<FavoritePropertyViewModel?> GetFavoriteDetailsAsync(Guid favoriteId)
+        {
+            FavoritePropertyViewModel? favoriteProperty = await this.favoriteRepository
+                .GetAllAttached()
+                .Where(x => x.Id == favoriteId)
+                .Select(x => new FavoritePropertyViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Properties = x.FavoriteProperties!
+                    .Where
+                    (x => x.IsDeleted == false)
+                    .Select(x => new PropertyViewModel
+                    {
+                        Id = x.PropertyId.ToString(),
+                        Name = x.Property.PropertyType.Name,
+                        BuildingType = x.Property.BuildingType.Name,
+                        DistrictName = x.Property.District.Name,
+                        Floor = x.Property.Floor,
+                        Price = x.Property.Price,
+                        Year = x.Property.Year,
+                        DateAdded = x.Property.DateAdded,
+                    }).ToArray()
+                }).FirstOrDefaultAsync();
+
+            return favoriteProperty;
+        }
+
+        public async Task<bool> RemovePropertyFromFavoriteAsync(Guid propertyId, Guid favoriteId, Guid userId)
+        {
+            bool propertyExists = await this.propertyRepository.GetAllAttached()
+                .AnyAsync(x => x.Id == propertyId);
+
+            if (propertyExists == false)
+            {
+                return false;
+            }
+
+            PropertyFavorite? propFav = await this.propFavRepository
+            .GetAllAttached()
+            .Include(x => x.Favorite)
+            .FirstOrDefaultAsync(x => x.PropertyId == propertyId && x.Favorite.UserId == userId && x.FavoriteId == favoriteId);
+
+            if (propFav == null)
+            {
+                return false;
+            }
+
+            propFav.IsDeleted = true;
+            await this.propFavRepository.UpdateAsync(propFav);
+            return true;
+
+        }
+
+        // TODO Below is not tested and optional
+        //public async Task<bool> RestoreFavoriteAsync(Guid id)
+        //{
+        //    Favorite? favorite = await this.favoriteRepository
+        //        .GetAllAttached()
+        //        .IgnoreQueryFilters()
+        //        .FirstOrDefaultAsync(x => x.Id == id);
+
+        //    if (favorite == null || !favorite.IsDeleted)
+        //    {
+        //        return false;
+        //    }
+
+        //    favorite.IsDeleted = false;
+        //    return await this.favoriteRepository.UpdateAsync(favorite);
+        //}
+    }
 }

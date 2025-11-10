@@ -35,6 +35,12 @@ namespace RealEstateApp.Web.Infrastructure.Extensions
                     Type[] constructArgs = new Type[2];
                     constructArgs[0] = type;
 
+                    if (type == typeof(PropertyFavorite))
+                    {
+                        services.AddScoped(typeof(IRepository<PropertyFavorite, Guid>), typeof(BaseRepository<PropertyFavorite, Guid>));
+                        continue;
+                    }
+
                     if (idPropertyInfo == null)
                     {
                         constructArgs[1] = typeof(object);

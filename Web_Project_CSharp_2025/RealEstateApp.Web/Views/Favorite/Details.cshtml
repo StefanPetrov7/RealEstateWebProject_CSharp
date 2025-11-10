@@ -48,7 +48,7 @@
                     </td>
                     <td>@property.DateAdded.ToString("MMMM yyyy")</td>
                     <td>
-                        <a asp-action="Details" asp-controller="Favorite" asp-route-id="@Model.Id" class="btn btn-primary d-inline">Details</a>
+                        <a asp-action="Details" asp-controller="Property" asp-route-id="@property.Id" class="btn btn-primary d-inline">Details</a>
 
                         <form asp-controller="Favorite" asp-action="RemovePropertyFromFavorites" method="post" class="d-inline">
                             <input type="hidden" name="propId" value="@property.Id" />

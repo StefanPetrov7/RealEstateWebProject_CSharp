@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Data;
 using RealEstateApp.Data.DataServices.Contracts;
 using RealEstateApp.Data.Models;
+using RealEstateApp.Data.Repository.Contracts;
 using RealEstateApp.Web.ViewModels.Favorite;
 using RealEstateApp.Web.ViewModels.Property;
 
@@ -12,20 +13,29 @@ namespace RealEstateApp.Web.Controllers
 {
     public class FavoriteController : BaseController
     {
-        private readonly ApplicationDbContext dbContext;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IFavoriteService favoriteService;
         private readonly IValidationService validationService;
+        private readonly IRepository<Favorite, Guid> favoriteRepository;
+        private readonly IRepository<Property, Guid> propertyRepository;
 
-        public FavoriteController(ApplicationDbContext dbContext, IFavoriteService favoriteService, IValidationService validationService, UserManager<ApplicationUser> userManager)
+        public FavoriteController(
+            ApplicationDbContext dbContext,
+            IFavoriteService favoriteService,
+            IValidationService validationService,
+            UserManager<ApplicationUser> userManager,
+            IRepository<Favorite, Guid> favRepo,
+            IRepository<Property, Guid> propRepository,
+            IRepository<PropertyFavorite, Guid> propFavRepository
+            )
         {
-            this.dbContext = dbContext;
             this.favoriteService = favoriteService;
             this.validationService = validationService;
             this.userManager = userManager;
+            this.favoriteRepository = favRepo;
+            this.propertyRepository = propRepository;
         }
 
-     
         public async Task<IActionResult> Index()
         {
             string userId = this.userManager.GetUserId(this.User)!;
@@ -68,7 +78,6 @@ namespace RealEstateApp.Web.Controllers
             return this.RedirectToAction(nameof(Index));
         }
 
-    
         [HttpGet]
         public async Task<IActionResult> Details(string? id)
         {
@@ -78,28 +87,7 @@ namespace RealEstateApp.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            FavoritePropertyViewModel? favProperties = await this.dbContext.Favorites.Where(x => x.Id == favGuid)
-                .Include(x => x.FavoriteProperties)!
-                .ThenInclude(x => x.Property)
-                .Select(x => new FavoritePropertyViewModel()
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Properties = x.FavoriteProperties!
-                    .Where(x => x.IsDeleted == false)
-                    .Select(x => new PropertyViewModel
-                    {
-                        Id = x.Property.Id.ToString(),
-                        Name = x.Property.PropertyType.Name,
-                        BuildingType = x.Property.BuildingType.Name,
-                        DistrictName = x.Property.District.Name,
-                        Floor = x.Property.Floor,
-                        Price = x.Property.Price,
-                        Size = x.Property.Size,
-                        Year = x.Property.Year,
-                        DateAdded = x.Property.DateAdded,
-                    }).ToArray()
-                }).FirstOrDefaultAsync();
+            FavoritePropertyViewModel? favProperties = await this.favoriteService.GetFavoriteDetailsAsync(favGuid);
 
             if (favProperties == null)
             {
@@ -121,11 +109,7 @@ namespace RealEstateApp.Web.Controllers
 
             var userId = Guid.Parse(userManager.GetUserId(this.User)!);
 
-            Property? property = await this.dbContext.Properties.Where(x => x.Id == propIdGuid)
-                .Include(x => x.PropertyType)
-                .Include(x => x.BuildingType)
-                .Include(x => x.District)
-                .FirstOrDefaultAsync();
+            Property? property = await this.propertyRepository.GetByIdAsync(propIdGuid);
 
             if (property == null)
             {
@@ -146,7 +130,7 @@ namespace RealEstateApp.Web.Controllers
                 Year = property.Year,
                 DateAdded = property.DateAdded,
                 ImageUrl = property.ImageUrl,
-                Favorites = await this.dbContext.Favorites
+                Favorites = await this.favoriteRepository.GetAllAttached()
                 .Where(x => x.UserId == userId)
                 .Include(x => x.FavoriteProperties)!
                 .ThenInclude(x => x.Property)
@@ -178,9 +162,9 @@ namespace RealEstateApp.Web.Controllers
                 return this.RedirectToAction(nameof(Index));
             }
 
-            bool propertyExists = await this.dbContext.Properties.AnyAsync(x => x.Id == validPropId);
+            Property? propertyExists = await this.propertyRepository.GetByIdAsync(validPropId);
 
-            if (propertyExists == false)
+            if (propertyExists == null)
             {
                 return this.RedirectToAction(nameof(Index));
             }
@@ -215,29 +199,16 @@ namespace RealEstateApp.Web.Controllers
                 return this.RedirectToAction(nameof(Index));
             }
 
-            Property? property = await this.dbContext.Properties.FirstOrDefaultAsync(x => x.Id == validPropId);
+            Guid validUserId = Guid.Parse(this.userManager.GetUserId(User)!);
 
-            if (property == null)
+            bool isRemoved = await this.favoriteService.RemovePropertyFromFavoriteAsync(validPropId,validFavoriteId,validUserId);
+
+            if (isRemoved == false)
             {
                 return this.RedirectToAction(nameof(Index));
             }
 
-            Guid userId = Guid.Parse(this.userManager.GetUserId(User)!);
-
-            PropertyFavorite? propFav = await this.dbContext.PropertyFavorites
-                .Include(x => x.Favorite)
-                .FirstOrDefaultAsync(x => x.PropertyId == validPropId && x.Favorite.UserId == userId && x.FavoriteId == validFavoriteId);
-
-            if (propFav == null)
-            {
-                return this.RedirectToAction(nameof(Index));
-            }
-
-            propFav.IsDeleted = true;
-
-            await this.dbContext.SaveChangesAsync();
             return this.RedirectToAction(nameof(Details), new { id = favoriteId });
-
         }
 
         [HttpPost]

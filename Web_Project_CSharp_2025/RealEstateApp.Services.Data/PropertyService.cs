@@ -9,9 +9,6 @@ namespace RealEstateApp.Data.DataServices
 {
     public class PropertyService : IPropertyService
     {
-        // Below code can be removed if the Repository behavior is ok. 
-        // Context will be used by the repository >> Services / Controllers will work with the Repo, Repo will work with the Context.
-        // Private readonly ApplicationDbContext dbContext;
         private readonly IRepository<Property, Guid> propertyRepository;
         private readonly IRepository<District, Guid> districtRepository;
         private readonly IRepository<BuildingType, Guid> buildingTypeRepository;
@@ -19,21 +16,15 @@ namespace RealEstateApp.Data.DataServices
 
         public PropertyService(ApplicationDbContext dbContext, IRepository<Property, Guid> propRepo, IRepository<District, Guid> distRepo, IRepository<BuildingType, Guid> buildTypeRepo, IRepository<PropertyType, Guid> propTypeRepo)
         {
-            // Below code can be removed if the Repository behavior is ok. 
-            //this.dbContext = dbContext;
             this.propertyRepository = propRepo;
             this.districtRepository = distRepo;
             this.buildingTypeRepository = buildTypeRepo;
             this.propertyTypeRepository = propTypeRepo;
-
         }
 
-        // Below code can be removed if the Repository behavior is ok. 
-        // To use repository for this method. 
         public async Task<bool> HasPropertyBeenAdded()
         {
             return await this.propertyRepository.AnyAsync();
-            //return await this.dbContext.Properties.AnyAsync(); 
         }
 
         public async Task AddPropertyAsync(string district, byte? floor, byte? totalFloor, int size, int? yardSize, int? year, string propertyType, string buildingType, int? price, string imageUrl = null)
@@ -82,18 +73,6 @@ namespace RealEstateApp.Data.DataServices
 
             await this.propertyRepository.ExecuteInTransactionAsync(property);
 
-            // Below code can be removed if the Repository behavior is ok. 
-
-            //try
-            //{
-            //    await this.propertyRepository.AddAsync(property);
-            //    await transaction.CommitAsync();
-            //}
-            //catch (Exception ex)
-            //{
-            //    await transaction.RollbackAsync();
-            //    throw new InvalidOperationException($"DB Add Property Transaction failed:  {ex.Message}");
-            //}
         }
 
         public async Task<PropertyViewModel> GetPropertyDetailsByIdAsync(Guid Id)

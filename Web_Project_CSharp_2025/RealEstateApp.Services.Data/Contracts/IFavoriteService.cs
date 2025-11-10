@@ -11,5 +11,9 @@ namespace RealEstateApp.Data.DataServices.Contracts
         Task<bool> AddPropertyToFavoritesAsync(Guid propertyId, IEnumerable<Guid> favoriteIds);
 
         Task<bool> SoftDeleteFavoriteAsync(Guid id);
+
+        Task<FavoritePropertyViewModel?> GetFavoriteDetailsAsync(Guid favoriteId);
+
+        Task<bool> RemovePropertyFromFavoriteAsync(Guid propertyId, Guid favoriteId, Guid userId);
     }
 }

@@ -13,20 +13,18 @@ namespace RealEstateApp.Web.Controllers
 {
     public class PropertyController : BaseController
     {
-        // DB context / favoriteService / userManager > not used for now!!!!
-
-        private readonly ApplicationDbContext dbContext;
         private readonly IPropertyService propertyService;
         private readonly IValidationService validationService;
-        private readonly IFavoriteService favoriteService;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public PropertyController(ApplicationDbContext dbContext, IPropertyService propertyService, IValidationService validationService, IFavoriteService favoriteService, UserManager<ApplicationUser> userManager)
+        public PropertyController(
+            IPropertyService propertyService, 
+            IValidationService validationService,
+            UserManager<ApplicationUser> userManager
+            )
         {
-            this.dbContext = dbContext;
             this.propertyService = propertyService;
             this.validationService = validationService;
-            this.favoriteService = favoriteService;
             this.userManager = userManager;
         }
 
