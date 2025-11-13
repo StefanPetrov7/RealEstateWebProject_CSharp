@@ -20,7 +20,7 @@ namespace RealEstateApp.Web
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                                     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -58,10 +58,14 @@ namespace RealEstateApp.Web
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
-            builder.Services.AddScoped<ISeedService, SeedService>();
-            builder.Services.AddScoped<IPropertyService, PropertyService>();
-            builder.Services.AddScoped<IFavoriteService, FavoriteService>();
-            builder.Services.AddScoped<IValidationService, ValidationService>();
+
+            //builder.Services.AddScoped<ISeedService, SeedService>();
+            //builder.Services.AddScoped<IPropertyService, PropertyService>();
+            //builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+            //builder.Services.AddScoped<IValidationService, ValidationService>();
+            // Below extension method register all the above services!
+
+            builder.Services.RegisterUserServices(typeof(FavoriteService).Assembly);
 
             WebApplication app = builder.Build();
 

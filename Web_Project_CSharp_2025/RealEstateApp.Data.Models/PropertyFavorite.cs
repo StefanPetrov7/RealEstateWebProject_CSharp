@@ -9,6 +9,7 @@ namespace RealEstateApp.Data.Models
 {
     public class PropertyFavorite
     {
+        public Guid Id { get; set; }
         public Guid PropertyId { get; set; }
 
         [ForeignKey(nameof(PropertyId))]

@@ -18,7 +18,6 @@ namespace RealEstateApp.Common
             public const int PropertyMinTotalFloors = 1;
             public const int PropertyImageUrlMinLength = 9;
             public const int PropertyImageUrlMaxLength = 2083;
-
         }
 
         public static class Favorite

@@ -12,7 +12,7 @@ using RealEstateApp.Data;
 namespace RealEstateApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251105162804_InitialCreate")]
+    [Migration("20251113171627_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -333,7 +333,8 @@ namespace RealEstateApp.Data.Migrations
 
             modelBuilder.Entity("RealEstateApp.Data.Models.PropertyFavorite", b =>
                 {
-                    b.Property<Guid>("PropertyId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("FavoriteId")
@@ -344,9 +345,15 @@ namespace RealEstateApp.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.HasKey("PropertyId", "FavoriteId");
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("FavoriteId");
+
+                    b.HasIndex("PropertyId", "FavoriteId")
+                        .IsUnique();
 
                     b.ToTable("PropertyFavorites");
                 });

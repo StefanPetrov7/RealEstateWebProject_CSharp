@@ -8,7 +8,10 @@ namespace RealEstateApp.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<PropertyFavorite> builder)
         {
-            builder.HasKey(x => new { x.PropertyId, x.FavoriteId });
+            builder.HasKey(x => x.Id);
+
+            builder.HasIndex(x => new { x.PropertyId, x.FavoriteId })
+                .IsUnique();
 
             builder.Property(x => x.IsDeleted)
                 .HasDefaultValue(false);

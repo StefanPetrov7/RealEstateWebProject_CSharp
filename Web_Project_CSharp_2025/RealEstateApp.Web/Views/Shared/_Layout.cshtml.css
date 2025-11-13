@@ -1,48 +1,100 @@
 ﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+/* Theme variables */
+:root {
+    --bs-primary: #14b8a6; /* teal */
+    --bs-secondary: #64748b; /* slate */
+    --accent: #f59e0b; /* orange */
+    --bs-body-bg: #f8fafc; /* off-white */
+    --bs-body-color: #0f172a; /* dark slate */
+    --bs-body-font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+}
+
+body {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    font-family: var(--bs-body-font-family);
+}
+
+.navbar {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+/* Buttons */
+.btn-primary {
+    color: #fff;
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+    .btn-primary:hover {
+        filter: brightness(0.9);
+    }
+
+.btn-accent {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+    .btn-accent:hover {
+        filter: brightness(0.95);
+    }
+
+/* Property cards */
+.property-card .card-img-top {
+    height: 180px;
+    object-fit: cover;
+}
+
+.property-card .price-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+/* Keep scaffolded helpers */
 a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
 }
 
 a {
-  color: #0077cc;
-}
-
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: var(--bs-primary);
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
 }
 
 .border-top {
-  border-top: 1px solid #e5e5e5;
+    border-top: 1px solid #e5e5e5;
 }
+
 .border-bottom {
-  border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
 
 button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+    font-size: 1rem;
+    line-height: inherit;
 }
 
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
+    /* remove position absolute */
+    position: static;
+    bottom: auto;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
 }
+
+

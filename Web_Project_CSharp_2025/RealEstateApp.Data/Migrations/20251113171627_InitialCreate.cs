@@ -257,13 +257,14 @@ namespace RealEstateApp.Data.Migrations
                 name: "PropertyFavorites",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FavoriteId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PropertyFavorites", x => new { x.PropertyId, x.FavoriteId });
+                    table.PrimaryKey("PK_PropertyFavorites", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PropertyFavorites_Favorites_FavoriteId",
                         column: x => x.FavoriteId,
@@ -341,6 +342,12 @@ namespace RealEstateApp.Data.Migrations
                 name: "IX_PropertyFavorites_FavoriteId",
                 table: "PropertyFavorites",
                 column: "FavoriteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PropertyFavorites_PropertyId_FavoriteId",
+                table: "PropertyFavorites",
+                columns: new[] { "PropertyId", "FavoriteId" },
+                unique: true);
         }
 
         /// <inheritdoc />

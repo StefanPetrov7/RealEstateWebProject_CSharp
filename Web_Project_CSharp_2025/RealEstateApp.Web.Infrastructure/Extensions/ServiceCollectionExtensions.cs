@@ -1,8 +1,8 @@
-﻿
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using System.Globalization;
 
 using RealEstateApp.Data.Models;
 using RealEstateApp.Data.Repository.Contracts;
@@ -12,50 +12,64 @@ namespace RealEstateApp.Web.Infrastructure.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void RegisterRepositories(this IServiceCollection services, Assembly modelsAssembly)
+        private const string SERVICE_INTERFACE_PREFIX = "I";
+        private const string SERVICE_SUFFIX = "Service";
+
+        public static void RegisterRepositories(this IServiceCollection services, Assembly repositoryAssembly)
         {
             Type[] typesToExclude = new Type[] { typeof(ApplicationUser) };
 
-            Type[] modelTypes = modelsAssembly.GetTypes()
+            Type[] repositoryClasses = repositoryAssembly.GetTypes()
                 .Where(x => !x.IsAbstract && !x.IsInterface && !x.Name.ToLower().EndsWith("attribute"))
                 .ToArray();
 
-            foreach (Type type in modelTypes)
+            foreach (Type type in repositoryClasses)
             {
                 if (typesToExclude.Contains(type) == false)
                 {
                     Type repositoryInterface = typeof(IRepository<,>);
                     Type repositoryInstanceType = typeof(BaseRepository<,>);
 
-
                     PropertyInfo idPropertyInfo = type.GetProperties()
                         .Where(x => x.Name.ToLower() == "id")
                         .SingleOrDefault()!;
 
-                    Type[] constructArgs = new Type[2];
-                    constructArgs[0] = type;
-
-                    if (type == typeof(PropertyFavorite))
-                    {
-                        services.AddScoped(typeof(IRepository<PropertyFavorite, Guid>), typeof(BaseRepository<PropertyFavorite, Guid>));
-                        continue;
-                    }
-
                     if (idPropertyInfo == null)
                     {
-                        constructArgs[1] = typeof(object);
+                        throw new InvalidOperationException($"Entity {type.Name} does not have an Id property. All entities must expose a surrogate Id for repository registration.");
                     }
-                    else
-                    {
-                        constructArgs[1] = idPropertyInfo.PropertyType;
-                    }
+
+                    Type[] constructArgs = { type, idPropertyInfo.PropertyType };
 
                     repositoryInterface = repositoryInterface.MakeGenericType(constructArgs);
                     repositoryInstanceType = repositoryInstanceType.MakeGenericType(constructArgs);
 
                     services.AddScoped(repositoryInterface, repositoryInstanceType);
-                 }
+                }
             }
+        }
+
+        public static IServiceCollection RegisterUserServices(this IServiceCollection serviceCollection, Assembly serviceAssembly)
+        {
+            Type[] serviceClasses = serviceAssembly.GetTypes()
+                .Where(x => !x.IsInterface &&
+                x.Name.EndsWith(SERVICE_SUFFIX))
+                .ToArray();
+
+            foreach (Type serviceClass in serviceClasses)
+            {
+                Type? serviceInterface = serviceClass.GetInterfaces().FirstOrDefault(x => x.Name == $"{SERVICE_INTERFACE_PREFIX}{serviceClass.Name}");
+
+                if (serviceInterface == null)
+                {
+                    throw new InvalidOperationException($"Service {serviceClass.Name} does not have a matching interface.");
+                }
+
+                serviceCollection.AddScoped(serviceInterface, serviceClass);
+            }
+
+            return serviceCollection;
         }
     }
 }
+       

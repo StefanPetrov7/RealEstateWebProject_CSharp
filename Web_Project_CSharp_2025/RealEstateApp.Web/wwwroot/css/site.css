@@ -1,22 +1,22 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+html, body {
+    height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
-} 
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    background-color: #1e293b; /* dark slate grey */
+    color: #f1f5f9; /* light text for contrast */
+    font-family: var(--bs-body-font-family);
+}
+
+main {
+    flex: 1; /* pushes footer down */
+}
+
+.footer {
+    position: static;
+    background-color: #0f172a; /* even darker footer */
+    color: #cbd5e1; /* softer grey text */
+}
