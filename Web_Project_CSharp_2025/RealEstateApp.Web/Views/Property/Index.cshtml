@@ -46,14 +46,18 @@
                 </td>
                 <td>@property.DateAdded.ToString("MMMM yyyy")</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@property.Id" class="btn btn-info">Details</a>
+                    <div class="d-flex gap-2">
+                        <a asp-action="Details" asp-route-id="@property.Id" class="btn btn-primary btn-sm flex-fill text-center">
+                            Details
+                        </a>
 
-                    @if (User?.Identity?.IsAuthenticated ?? false)
-                    {
-                        <a asp-controller="Favorite" asp-action="AddPropertyToFavorites" asp-route-id="@property.Id" class="btn btn-warning">Add to Favorites</a>
-
-                    }
-
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            <a asp-controller="Favorite" asp-action="AddPropertyToFavorites" asp-route-id="@property.Id" class="btn btn-primary btn-sm flex-fill text-center">
+                                Add to Favorites
+                            </a>
+                        }
+                    </div>
                 </td>
             </tr>
         }

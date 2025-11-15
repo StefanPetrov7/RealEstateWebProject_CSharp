@@ -1,0 +1,53 @@
+﻿/* ================================
+   Unauthorized Error Page Styling
+   ================================ */
+
+.error-wrapper {
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+}
+
+.error-card {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+    .error-card h1 {
+        color: #f87171;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .error-card p {
+        color: #cbd5e1;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .error-card .d-grid {
+        margin-top: 0.75rem;
+    }
+
+    .error-card .btn-primary {
+        background-color: var(--bs-primary) !important;
+        border-color: var(--bs-primary) !important;
+    }
+
+    .error-card .btn-secondary {
+        background-color: #475569 !important;
+        border-color: #475569 !important;
+        color: #f1f5f9 !important;
+    }
+
+    .error-card .status-code {
+        display: block;
+        margin-top: 0.5rem;
+        font-weight: 600;
+        color: #38bdf8; /* cyan accent for visibility */
+        font-size: 1rem;
+    }

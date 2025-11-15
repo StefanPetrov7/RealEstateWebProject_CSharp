@@ -13,40 +13,50 @@
     <title>@ViewData["Title"] RealEstate</title>
 
     <!-- Google font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet" />
 
-    <!-- Bootstrap CSS (keep your existing lib reference) -->
+    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
-    <!-- Bootstrap Icons (add this file to your project; see Step 1a if missing) -->
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.css" />
 
-    <!-- Your site theme -->
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!-- Project styles -->
     <link rel="stylesheet" href="~/RealEstateApp.Web.styles.css" asp-append-version="true" />
+
+    <!-- Site overrides (must be last so dark theme wins) -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
     <header>
+        <!-- Navbar intentionally kept white -->
         <nav class="navbar navbar-expand-lg bg-white navbar-light border-bottom shadow-sm">
             <div class="container">
                 <a class="navbar-brand fw-bold text-primary" asp-controller="Home" asp-action="Index">
                     <i class="bi bi-building"></i> RealEstateApp
                 </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                        aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="mainNav">
                     <ul class="navbar-nav ms-auto align-items-lg-center">
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Property" asp-action="Index">Properties</a></li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary nav-btn" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary nav-btn" asp-controller="Property" asp-action="Index">Properties</a>
+                        </li>
                         @if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            <li class="nav-item"><a class="nav-link" asp-controller="Favorite" asp-action="Index">Favorites</a></li>
+                            <li class="nav-item">
+                                <a class="btn btn-primary nav-btn" asp-controller="Favorite" asp-action="Index">Favorites</a>
+                            </li>
                         }
                         <li class="nav-item ms-lg-3">
-                            <a class="btn btn-primary" asp-controller="Property" asp-action="Create">
+                            <a class="btn btn-primary nav-btn" asp-controller="Property" asp-action="Create">
                                 <i class="bi bi-plus-lg"></i> Add Property
                             </a>
                         </li>
@@ -57,12 +67,14 @@
             </div>
         </nav>
     </header>
+
     <main role="main" class="py-4 flex-grow-1">
         <div class="container-xl">
             @RenderBody()
         </div>
     </main>
 
+    <!-- Footer intentionally kept white -->
     <footer class="footer border-top py-4 bg-white">
         <div class="container d-flex justify-content-between align-items-center">
             <small class="text-secondary">© @footerNote RealEstate App</small>
@@ -72,6 +84,8 @@
             </div>
         </div>
     </footer>
+
+    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

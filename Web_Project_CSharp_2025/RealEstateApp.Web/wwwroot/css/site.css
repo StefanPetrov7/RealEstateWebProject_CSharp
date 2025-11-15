@@ -1,22 +1,209 @@
+/* ================================
+   Layout & Global Theme
+   ================================ */
+
+/* Ensure full height layout for flexbox */
 html, body {
     height: 100%;
 }
 
+/* Global body styling */
 body {
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    background-color: #1e293b; /* dark slate grey */
+    display: flex; /* flex layout for sticky footer */
+    flex-direction: column; /* vertical stacking */
+    margin: 0; /* remove default margin */
+    background-color: #1e293b; /* dark slate grey background */
     color: #f1f5f9; /* light text for contrast */
-    font-family: var(--bs-body-font-family);
+    font-family: var(--bs-body-font-family); /* use global font variable */
 }
 
+/* Main content expands to push footer down */
 main {
-    flex: 1; /* pushes footer down */
+    flex: 1;
 }
 
+/* Footer styling */
 .footer {
-    position: static;
-    background-color: #0f172a; /* even darker footer */
-    color: #cbd5e1; /* softer grey text */
+    position: static; /* normal flow positioning */
+    background-color: #0f172a; /* even darker footer background */
+    color: #cbd5e1; /* softer grey text for footer */
+}
+
+/* ================================
+   Global Variables
+   ================================ */
+:root {
+    --bs-body-bg: #1e293b; /* override Bootstrap body background */
+    --bs-body-color: #f1f5f9; /* override Bootstrap body text color */
+    --bs-body-font-family: "Merriweather", serif; /* printed, book-like font */
+    --bs-primary: #14b8a6; /* teal primary color */
+}
+
+/* ================================
+   Table Styling
+   ================================ */
+.table {
+    color: #f1f5f9; /* light text for table */
+}
+
+    .table th {
+        color: #f1f5f9; /* header text bright */
+        background-color: #0f172a; /* darker header row */
+    }
+
+    .table td {
+        color: #cbd5e1; /* softer grey for body cells */
+    }
+
+/* Striped table rows for readability */
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #1e293b !important; /* dark slate */
+}
+
+.table-striped > tbody > tr:nth-of-type(even) {
+    background-color: #334155 !important; /* slightly lighter slate */
+}
+
+/* Optional: table row hover highlight */
+.table tbody tr:hover {
+    background-color: #475569 !important; /* mid-slate hover */
+}
+
+/* ================================
+   Buttons
+   ================================ */
+
+/* Navbar buttons */
+.navbar .btn.nav-btn {
+    margin-left: 0.5rem; /* spacing between buttons */
+    color: #fff; /* white text */
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+    .navbar .btn.nav-btn:hover {
+        background-color: #0d9488; /* slightly darker teal on hover */
+        border-color: #0d9488;
+        transform: translateY(-1px); /* subtle lift effect */
+    }
+
+/* Global button override */
+.btn {
+    color: #fff !important; /* force white text */
+    background-color: var(--bs-primary) !important;
+    border-color: var(--bs-primary) !important;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+    .btn:hover {
+        background-color: #0d9488 !important;
+        border-color: #0d9488 !important;
+        transform: translateY(-1px);
+    }
+
+    .btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(20, 184, 166, 0.5); /* teal glow */
+    }
+
+/* Secondary button override */
+.btn-secondary {
+    background-color: #475569 !important; /* mid-slate grey */
+    border-color: #475569 !important;
+    color: #f1f5f9 !important;
+}
+
+    .btn-secondary:hover {
+        background-color: #64748b !important; /* lighter slate on hover */
+        border-color: #64748b !important;
+        color: #fff !important;
+    }
+
+/* ================================
+   Favorites View Styling
+   ================================ */
+.favorite-card {
+    background-color: #1e293b;
+    color: #f1f5f9;
+}
+
+    .favorite-card .card-title {
+        color: #f1f5f9;
+        font-weight: 700;
+    }
+
+    .favorite-card .card-body {
+        color: #cbd5e1;
+    }
+
+.favorite-img {
+    border: 2px solid #f1f5f9;
+    border-radius: 4px;
+}
+
+/* ================================
+   Identity Pages (Login/Register/Logout)
+   ================================ */
+
+/* Dark card wrapper for account forms */
+.account-card {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #475569;
+    border-radius: 6px;
+    padding: 1.5rem;
+}
+
+/* Force override Bootstrap's default white card */
+.card.account-card {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+}
+
+/* Form controls */
+.form-control {
+    background-color: #334155;
+    color: #f1f5f9;
+    border: 1px solid #475569;
+}
+
+    .form-control:focus {
+        background-color: #334155;
+        color: #f1f5f9;
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 0.2rem rgba(20, 184, 166, 0.5);
+    }
+
+/* Labels */
+.form-label {
+    color: #f1f5f9;
+}
+
+/* Validation messages */
+.text-danger {
+    color: #f87171;
+}
+
+/* Checkbox styling */
+.form-check-input {
+    background-color: #334155;
+    border: 1px solid #475569;
+}
+
+    .form-check-input:checked {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+
+/* Headings inside account cards */
+.account-card h2 {
+    color: #f1f5f9;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+::placeholder {
+    color: #cbd5e1;
+    opacity: 1; /* ensure full visibility */
 }

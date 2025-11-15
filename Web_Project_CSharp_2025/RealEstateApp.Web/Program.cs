@@ -81,14 +81,17 @@ namespace RealEstateApp.Web
                 app.UseHsts();
             }
 
+            app.UseStatusCodePagesWithRedirects("/Home/Error?statusCode={0}");
+
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 
-            app.UseRouting();
+            app.UseRouting();     
 
             app.UseAuthentication();
             app.UseAuthorization();
+
 
             using (var scope = app.Services.CreateScope())
             {

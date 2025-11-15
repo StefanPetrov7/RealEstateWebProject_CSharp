@@ -1,0 +1,31 @@
+﻿@{
+    ViewData["Title"] = "Error";
+    var statusCode = ViewData["StatusCode"];
+}
+
+<link rel="stylesheet" href="~/css/unauthorized-error.css" />
+
+<div class="row justify-content-center error-wrapper">
+    <div class="col-md-6 col-lg-5">
+        <div class="card error-card shadow-sm">
+            <div class="card-body text-center">
+                <h1 class="mb-3">Something went wrong</h1>
+                <p class="mb-4">
+                    We’re sorry, but you don’t have access to this page or an unexpected error occurred.
+                    <span class="status-code">Status Code: @statusCode</span>
+                </p>
+
+                <div class="d-grid mb-3">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">
+                        Back to Home
+                    </a>
+                </div>
+                <div class="d-grid">
+                    <a asp-page="/Account/Login" class="btn btn-secondary btn-lg">
+                        Log in
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

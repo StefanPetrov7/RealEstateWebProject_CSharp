@@ -1,6 +1,21 @@
-﻿
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
 
-<h2>@ViewData["Tittle"]</h2>
-<h3>@ViewData["Message"]</h3>
-<p>Explore our list of real estates.</p>
-<p>Find your dream home and build your life around it.</p>
+<div class="text-center my-5">
+    <h1 class="fw-bold text-light">@ViewData["Message"]</h1>
+    <p class="text-secondary fs-5">Explore our list of real estates.</p>
+    <p class="text-secondary">Find your dream home and build your life around it.</p>
+
+    <div class="mt-4">
+        <a class="btn btn-primary btn-lg me-3" asp-controller="Property" asp-action="Index">
+            <i class="bi bi-search"></i> Check Properties
+        </a>
+        @if (User?.Identity?.IsAuthenticated ?? false)
+        {
+            <a class="btn btn-accent btn-lg" asp-controller="Favorite" asp-action="Index">
+                <i class="bi bi-heart"></i> View Favorites
+            </a>
+        }
+    </div>
+</div>
