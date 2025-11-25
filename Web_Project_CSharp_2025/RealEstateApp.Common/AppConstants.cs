@@ -5,6 +5,10 @@
         public const int AppReleaseYear = 2024;
         public const string PropertyDefaultImageUrl = "~/Images/default_property_pic.jpg";
         public const string IsDeletedPropertyName = "IsDeleted";
+
+        public const string UserRoleName = "User";
+        public const string AdminRoleName = "Admin";
+
     }
 
     public class ExceptionMessages 

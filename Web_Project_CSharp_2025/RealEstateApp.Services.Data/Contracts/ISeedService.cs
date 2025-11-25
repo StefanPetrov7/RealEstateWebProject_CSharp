@@ -7,5 +7,7 @@ namespace RealEstateApp.Data.DataServices.Contracts
         Task RunSeed();
 
         Task ImportProperties(string fileLocation);
+
+         void SeedIdentity(IServiceProvider serviceProvider);
     }
 }

@@ -23,7 +23,6 @@ namespace RealEstateApp.WebApi.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
         [Route("details")]
         public async Task<ActionResult<PropertyViewModel>> GetPropertyDetails(string? propId)
         {
@@ -45,11 +44,9 @@ namespace RealEstateApp.WebApi.Controllers
 
         }
 
-
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
         [Route("properties")]
         public async Task<ActionResult<IEnumerable<PropertyViewModel>>> GetAllProperties()
         {

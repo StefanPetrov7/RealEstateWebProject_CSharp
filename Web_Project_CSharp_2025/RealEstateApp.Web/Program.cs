@@ -92,7 +92,6 @@ namespace RealEstateApp.Web
             app.UseAuthentication();
             app.UseAuthorization();
 
-
             using (var scope = app.Services.CreateScope())
             {
                 var seedServices = scope.ServiceProvider.GetRequiredService<ISeedService>();
