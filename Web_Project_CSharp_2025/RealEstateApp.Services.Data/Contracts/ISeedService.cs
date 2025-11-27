@@ -4,10 +4,10 @@ namespace RealEstateApp.Data.DataServices.Contracts
 {
     public interface ISeedService
     {
-        Task RunSeed();
+        Task SeedDefaultProperties();
 
         Task ImportProperties(string fileLocation);
 
-         void SeedIdentity(IServiceProvider serviceProvider);
+        Task SeedIdentityAsync();
     }
 }

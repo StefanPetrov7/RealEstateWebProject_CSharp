@@ -5,12 +5,14 @@ using System.Reflection;
 using System.Globalization;
 
 using RealEstateApp.Data.Models;
+using RealEstateApp.Data.DataServices.Contracts;
 using RealEstateApp.Data.Repository.Contracts;
 using RealEstateApp.Data.Repository;
+using RealEstateApp.Data.DataServices;
 
 namespace RealEstateApp.Web.Infrastructure.Extensions
 {
-    public static class ServiceCollectionExtensions
+    public static class ServiceApplicationExtensions
     {
         private const string SERVICE_INTERFACE_PREFIX = "I";
         private const string SERVICE_SUFFIX = "Service";
@@ -70,6 +72,25 @@ namespace RealEstateApp.Web.Infrastructure.Extensions
 
             return serviceCollection;
         }
+
+        public static IApplicationBuilder SeedDefaultIdentity(this IApplicationBuilder appBuilder)
+        {
+            using IServiceScope scope = appBuilder.ApplicationServices.CreateScope();
+            IServiceProvider serviceProvider = scope.ServiceProvider;
+
+            ISeedService seedServices = serviceProvider.GetRequiredService<ISeedService>();
+            seedServices.SeedIdentityAsync().GetAwaiter().GetResult();
+            return appBuilder;
+        }
+
+        public static IApplicationBuilder SeedDefaultProperties(this IApplicationBuilder appBuilder)
+        {
+            using IServiceScope scope = appBuilder.ApplicationServices.CreateScope();
+            IServiceProvider serviceProvider = scope.ServiceProvider;
+
+            ISeedService seedServices = serviceProvider.GetRequiredService<ISeedService>();
+            seedServices.SeedDefaultProperties().GetAwaiter().GetResult();
+            return appBuilder;
+        }
     }
 }
-       

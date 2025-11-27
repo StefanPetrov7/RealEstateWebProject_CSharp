@@ -1,27 +1,42 @@
-﻿using RealEstateApp.Data.ImportModels;
-using RealEstateApp.Common;
-
-using RealEstateApp.Data.DataServices.Contracts;
-using System.Text.Json;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Client;
+using RealEstateApp.Common;
+using RealEstateApp.Data.DataServices.Contracts;
+using RealEstateApp.Data.ImportModels;
+using RealEstateApp.Data.Models;
+using System;
+using System.Text.Json;
 
 
 namespace RealEstateApp.Data.DataServices
 {
     public class SeedService : ISeedService
     {
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly IUserStore<ApplicationUser> userStore;
+        // private readonly IUserEmailStore<ApplicationUser> emailStore;
+        private readonly RoleManager<IdentityRole<Guid>> roleManager;
+        private readonly IPropertyService propertyService;
+
         private readonly string propertyAppartementsString = "D:\\Git\\RealEstateWebProject_CSharp\\Web_Project_CSharp_2025\\RealEstateApp.Data\\JsonImportData\\imot.bg-raw-data-2021-03-18.json";
         private readonly string[] DefaultRoles = new string[] { AppConstants.AdminRoleName, AppConstants.UserRoleName };
 
-        private readonly IPropertyService propertyService;
-        public SeedService(IPropertyService service)
+        public SeedService(
+            IPropertyService propService,
+            UserManager<ApplicationUser> userManager,
+            IUserStore<ApplicationUser> userStore,
+            RoleManager<IdentityRole<Guid>> roleManager
+            // IUserEmailStore<ApplicationUser> emailStore
+            )
         {
-            this.propertyService = service;
+            this.propertyService = propService;
+            this.userManager = userManager;
+            this.userStore = userStore;
+            // this.emailStore = emailStore;
+            this.roleManager = roleManager;
         }
 
-        public async Task RunSeed()
+        public async Task SeedDefaultProperties()
         {
             if (await this.propertyService.HasPropertyBeenAdded())
             {
@@ -48,28 +63,69 @@ namespace RealEstateApp.Data.DataServices
             }
         }
 
-        public async void SeedIdentity(IServiceProvider serviceProvider)
+        public async Task SeedIdentityAsync()
         {
-            await SeedRolesAsync(serviceProvider);
+            await this.SeedRolesAsync();
+            await this.SeedUSersAsync();
         }
 
-        private async Task SeedRolesAsync(IServiceProvider serviceProvider)
+        private async Task SeedRolesAsync()
         {
-            RoleManager<IdentityRole> roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
             foreach (string defaultRole in DefaultRoles)
             {
-                bool roleExists = await roleManager.RoleExistsAsync(defaultRole);
+                bool roleExists = await this.roleManager.RoleExistsAsync(defaultRole);
 
                 if (roleExists == false)
                 {
-                    IdentityRole identityRole = new IdentityRole(defaultRole);
+                    IdentityRole<Guid> identityRole = new IdentityRole<Guid>
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = defaultRole,
+                        NormalizedName = defaultRole.ToUpper()
+                    };
+
                     IdentityResult result = await roleManager.CreateAsync(identityRole);
 
                     if (result.Succeeded == false)
                     {
                         throw new Exception($"Exception while creating new identity role: {defaultRole}!");
                     }
+                }
+            }
+        }
+
+        private async Task SeedUSersAsync()
+        {
+            string adminMail = "admin@app.com";
+            string adminPassword = "123456";
+
+            ApplicationUser? userSeed = await userManager.FindByNameAsync(adminMail);
+
+            if (userSeed == null)
+            {
+
+                ApplicationUser adminUser = new ApplicationUser()
+                {
+                    UserName = adminMail,
+                    Email = adminMail,
+                    EmailConfirmed = true,
+                };
+
+                IdentityResult result = await this.userManager.CreateAsync(adminUser, adminPassword);
+
+                if (result.Succeeded == false)
+                {
+                    throw new Exception($"Exception while creating admin user {adminMail}!");
+                }
+
+
+                // await this.emailStore.SetUserNameAsync(adminUser, adminMail, CancellationToken.None);
+
+                result = await this.userManager.AddToRoleAsync(adminUser, AppConstants.AdminRoleName);
+
+                if (result.Succeeded == false)
+                {
+                    throw new Exception($"Exception while adding {AppConstants.AdminRoleName} role to the {adminMail} user");
                 }
             }
         }

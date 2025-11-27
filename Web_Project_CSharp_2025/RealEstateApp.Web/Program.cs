@@ -10,6 +10,7 @@ using RealEstateApp.Data.DataServices.Contracts;
 using RealEstateApp.Data.Models;
 using RealEstateApp.Web.Infrastructure;
 using RealEstateApp.Web.Infrastructure.Extensions;
+using System.Security.Principal;
 
 namespace RealEstateApp.Web
 {
@@ -53,6 +54,7 @@ namespace RealEstateApp.Web
             //builder.Services.AddScoped<IRepository<BuildingType, Guid>, BaseRepository<BuildingType, Guid>>();
             //builder.Services.AddScoped<IRepository<Favorite, Guid>, BaseRepository<Favorite, Guid>>();
             //builder.Services.AddScoped<IRepository<PropertyFavorite, object>, BaseRepository<PropertyFavorite, object>>();
+            // My extension method
             // Below extension method register all the above repositories!
             builder.Services.RegisterRepositories(typeof(ApplicationUser).Assembly);
 
@@ -63,6 +65,7 @@ namespace RealEstateApp.Web
             //builder.Services.AddScoped<IPropertyService, PropertyService>();
             //builder.Services.AddScoped<IFavoriteService, FavoriteService>();
             //builder.Services.AddScoped<IValidationService, ValidationService>();
+            // My extension method
             // Below extension method register all the above services!
 
             builder.Services.RegisterUserServices(typeof(FavoriteService).Assembly);
@@ -87,16 +90,14 @@ namespace RealEstateApp.Web
 
             app.UseStaticFiles();
 
-            app.UseRouting();     
+            app.UseRouting();
+
+            // My extension methods >> seeding roles and one test admin user and seeding default properties
+            app.SeedDefaultIdentity();
+            app.SeedDefaultProperties();
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var seedServices = scope.ServiceProvider.GetRequiredService<ISeedService>();
-                await seedServices.RunSeed();
-            }
 
             app.MapControllerRoute(
                 name: "default",

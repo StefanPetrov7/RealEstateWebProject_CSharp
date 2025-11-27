@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RealEstateApp.Data\RealEstateApp.Data.csproj" />
+    <ProjectReference Include="..\RealEstateApp.Services.Data\RealEstateApp.Services.Data.csproj" />
   </ItemGroup>
 
 </Project>
