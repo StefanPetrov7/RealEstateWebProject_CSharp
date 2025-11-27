@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RealEstateApp.Common;
 using RealEstateApp.Data.DataServices.Contracts;
@@ -14,9 +15,9 @@ namespace RealEstateApp.Data.DataServices
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IUserStore<ApplicationUser> userStore;
-        // private readonly IUserEmailStore<ApplicationUser> emailStore;
         private readonly RoleManager<IdentityRole<Guid>> roleManager;
         private readonly IPropertyService propertyService;
+        private readonly IConfiguration configuration;
 
         private readonly string propertyAppartementsString = "D:\\Git\\RealEstateWebProject_CSharp\\Web_Project_CSharp_2025\\RealEstateApp.Data\\JsonImportData\\imot.bg-raw-data-2021-03-18.json";
         private readonly string[] DefaultRoles = new string[] { AppConstants.AdminRoleName, AppConstants.UserRoleName };
@@ -25,15 +26,15 @@ namespace RealEstateApp.Data.DataServices
             IPropertyService propService,
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
-            RoleManager<IdentityRole<Guid>> roleManager
-            // IUserEmailStore<ApplicationUser> emailStore
+            RoleManager<IdentityRole<Guid>> roleManager,
+            IConfiguration configuration
             )
         {
             this.propertyService = propService;
             this.userManager = userManager;
             this.userStore = userStore;
-            // this.emailStore = emailStore;
             this.roleManager = roleManager;
+            this.configuration = configuration;   
         }
 
         public async Task SeedDefaultProperties()
@@ -96,14 +97,13 @@ namespace RealEstateApp.Data.DataServices
 
         private async Task SeedUSersAsync()
         {
-            string adminMail = "admin@app.com";
-            string adminPassword = "123456";
+            string? adminMail = this.configuration["UserSeed:TestAdmin:Email"];
+            string? adminPassword = this.configuration["UserSeed:TestAdmin:Password"];
 
             ApplicationUser? userSeed = await userManager.FindByNameAsync(adminMail);
 
             if (userSeed == null)
             {
-
                 ApplicationUser adminUser = new ApplicationUser()
                 {
                     UserName = adminMail,
@@ -117,9 +117,6 @@ namespace RealEstateApp.Data.DataServices
                 {
                     throw new Exception($"Exception while creating admin user {adminMail}!");
                 }
-
-
-                // await this.emailStore.SetUserNameAsync(adminUser, adminMail, CancellationToken.None);
 
                 result = await this.userManager.AddToRoleAsync(adminUser, AppConstants.AdminRoleName);
 
