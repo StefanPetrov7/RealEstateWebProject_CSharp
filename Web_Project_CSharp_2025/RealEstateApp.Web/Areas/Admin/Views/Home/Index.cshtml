@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Admin Dashboard</h2>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Users</h5>
+                    <p class="card-text">Manage application users, roles, and permissions.</p>
+                    <a asp-area="Admin" asp-controller="ManageUsers" asp-action="Index" class="btn btn-primary btn-sm">
+                        Manage Users
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Properties</h5>
+                    <p class="card-text">View, edit, or add new properties in the system.</p>
+                    <a asp-area="Admin" asp-controller="Properties" asp-action="Index" class="btn btn-primary btn-sm">
+                        Manage Properties
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Reports</h5>
+                    <p class="card-text">Generate and review system activity reports.</p>
+                    <a asp-area="Admin" asp-controller="Reports" asp-action="Index" class="btn btn-primary btn-sm">
+                        View Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="text-muted">
+        <small>Logged in as: @User.Identity?.Name</small>
+    </div>
+</div>

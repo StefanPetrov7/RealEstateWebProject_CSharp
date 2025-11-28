@@ -54,6 +54,19 @@
                             <li class="nav-item">
                                 <a class="btn btn-primary nav-btn" asp-controller="Favorite" asp-action="Index">Favorites</a>
                             </li>
+
+                            @* Show Admin button only if user is in Admin role *@
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item ms-lg-3">
+                                    <a class="btn btn-warning nav-btn text-dark"
+                                       asp-area="Admin"
+                                       asp-controller="Home"
+                                       asp-action="Index">
+                                        <i class="bi bi-shield-lock"></i> Admin
+                                    </a>
+                                </li>
+                            }
                         }
                         <li class="nav-item ms-lg-3">
                             <a class="btn btn-primary nav-btn" asp-controller="Property" asp-action="Create">

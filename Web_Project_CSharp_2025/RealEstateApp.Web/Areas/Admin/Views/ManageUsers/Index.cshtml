@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Manage Users";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Manage Users</h2>
+
+    <div class="mb-3">
+        <a asp-area="Admin" asp-controller="ManageUsers" asp-action="Create" class="btn btn-success">
+            <i class="bi bi-person-plus"></i> Add New User
+        </a>
+    </div>
+
+    <table class="table table-striped table-hover shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">User ID</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Roles</th>
+                <th scope="col" class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Example row, replace with model binding -->
+            <tr>
+                <td>12345</td>
+                <td>admin@app.com</td>
+                <td>admin@app.com</td>
+                <td>Admin</td>
+                <td class="text-end">
+                    <a asp-area="Admin" asp-controller="ManageUsers" asp-action="Edit" asp-route-id="12345" class="btn btn-sm btn-primary">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                    <a asp-area="Admin" asp-controller="ManageUsers" asp-action="Delete" asp-route-id="12345" class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
