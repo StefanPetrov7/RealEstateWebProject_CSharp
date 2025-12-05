@@ -1,4 +1,8 @@
-﻿@{
+﻿@using RealEstateApp.Web.ViewModels.Admin.Users
+
+@model IEnumerable<UserManagementIndexViewModel>
+
+@{
     ViewData["Title"] = "Manage Users";
 }
 
@@ -22,21 +26,41 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Example row, replace with model binding -->
-            <tr>
-                <td>12345</td>
-                <td>admin@app.com</td>
-                <td>admin@app.com</td>
-                <td>Admin</td>
-                <td class="text-end">
-                    <a asp-area="Admin" asp-controller="ManageUsers" asp-action="Edit" asp-route-id="12345" class="btn btn-sm btn-primary">
-                        <i class="bi bi-pencil-square"></i> Edit
-                    </a>
-                    <a asp-area="Admin" asp-controller="ManageUsers" asp-action="Delete" asp-route-id="12345" class="btn btn-sm btn-danger">
-                        <i class="bi bi-trash"></i> Delete
-                    </a>
-                </td>
-            </tr>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>@string.Join(", ", user.Roles)</td>
+                    <td class="text-end">
+                        <a asp-area="Admin" asp-controller="ManageUsers" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+
+                        @* Only show Delete/Restore if the user is NOT an Admin *@
+                        @if (!user.Roles.Contains("Admin"))
+                        {
+                            if (user.IsDeleted)
+                            {
+                                <form asp-area="Admin" asp-controller="ManageUsers" asp-action="Restore" asp-route-id="@user.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-arrow-counterclockwise"></i> Restore
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-area="Admin" asp-controller="ManageUsers" asp-action="Delete" asp-route-id="@user.Id" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </form>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>

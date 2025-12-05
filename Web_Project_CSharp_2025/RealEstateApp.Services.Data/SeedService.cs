@@ -125,6 +125,16 @@ namespace RealEstateApp.Data.DataServices
                     throw new Exception($"Exception while adding {AppConstants.AdminRoleName} role to the {adminMail} user");
                 }
             }
+            else if (userSeed.IsDeleted == true) 
+            {
+                userSeed.IsDeleted = false; 
+                await userManager.UpdateAsync(userSeed);
+
+                if (!await userManager.IsInRoleAsync(userSeed, AppConstants.AdminRoleName))
+                {
+                    await userManager.AddToRoleAsync(userSeed, AppConstants.AdminRoleName);
+                }
+            }
         }
     }
 }

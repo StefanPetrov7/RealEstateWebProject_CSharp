@@ -2,10 +2,12 @@
 
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RealEstateApp.Data.Models;
+using static RealEstateApp.Common.AppConstants;
 
 namespace RealEstateApp.Web.Areas.Identity.Pages.Account
 {
@@ -15,40 +17,41 @@ namespace RealEstateApp.Web.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly ILogger<RegisterModel> _logger;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<RegisterModel> logger)
+            ILogger<RegisterModel> logger,
+            RoleManager<IdentityRole<Guid>> roleManager
+            )
         {
             _userManager = userManager;
             _userStore = userStore;
             _signInManager = signInManager;
             _logger = logger;
+            _roleManager = roleManager;
         }
 
 
         [BindProperty]
         public InputModel Input { get; set; }
 
-
         public string ReturnUrl { get; set; }
-
 
         public class InputModel
         {
-
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Required]
+   
             [StringLength(50, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
             [Display(Name = "Username")]
-            public string Username { get; set; }  
-  
+            public string Username { get; set; }
+
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
@@ -60,7 +63,6 @@ namespace RealEstateApp.Web.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
         }
-
 
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -76,16 +78,31 @@ namespace RealEstateApp.Web.Areas.Identity.Pages.Account
                 var user = CreateUser();
                 user.Email = Input.Email;  // => hard code for the app to work need to be configured!!!!
 
-                await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
-                var result = await _userManager.CreateAsync(user, Input.Password);      
+                // Bypassing username for now. Setting mail as username.  
+                var username = string.IsNullOrWhiteSpace(Input.Username) ? Input.Email : Input.Username;
+                await _userStore.SetUserNameAsync(user, username, CancellationToken.None);
+
+                var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    var userId = await _userManager.GetUserIdAsync(user);
+                    var createdUser = await _userManager.FindByNameAsync(user.UserName);
 
-                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    var roleResult = await this._userManager.AddToRoleAsync(createdUser, UserRoleName);
+
+                    if (roleResult.Succeeded == false)
+                    {
+                        foreach (var error in roleResult.Errors)
+                        {
+                            _logger.LogError($"Role assignment failed: {error.Description}");
+                        }
+
+                        throw new InvalidOperationException($"Cannot assign role '{UserRoleName}' to user {user.Email}");
+                    }
+
+                    await _signInManager.SignInAsync(createdUser, isPersistent: false);
                     return LocalRedirect(returnUrl);
                 }
                 foreach (var error in result.Errors)

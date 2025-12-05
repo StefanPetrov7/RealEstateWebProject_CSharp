@@ -207,3 +207,32 @@ main {
     color: #cbd5e1;
     opacity: 1; /* ensure full visibility */
 }
+
+/* ================================
+   Admin Dashboard Styling
+   ================================ */
+.admin-dashboard .card {
+    background-color: #334155; /* dark slate card background */
+    color: #f1f5f9; /* light text for contrast */
+    border: 1px solid #475569; /* subtle border */
+}
+
+.admin-dashboard .card-title {
+    color: #14b8a6; /* teal accent for titles */
+    font-weight: 700;
+}
+
+.admin-dashboard .card-text {
+    color: #cbd5e1; /* softer grey for descriptions */
+}
+
+.admin-dashboard .btn {
+    background-color: #14b8a6 !important; /* teal buttons */
+    border-color: #14b8a6 !important;
+    color: #fff !important;
+}
+
+    .admin-dashboard .btn:hover {
+        background-color: #0d9488 !important; /* darker teal on hover */
+        border-color: #0d9488 !important;
+    }

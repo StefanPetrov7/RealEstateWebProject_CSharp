@@ -1,0 +1,57 @@
+﻿@{
+    Layout = null;
+    var userName = User.Identity?.Name ?? "Admin";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin | RealEstateApp</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-warning" asp-area="Admin" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-shield-lock"></i> Admin Panel
+                </a>
+
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ms-auto">
+                        @if (User?.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item">
+                                <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="form-inline">
+                                    <button type="submit" class="btn btn-link nav-link text-white">Logout</button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="py-4">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="footer border-top py-3 bg-dark text-light">
+        <div class="container d-flex justify-content-between">
+            <small>© RealEstateApp Admin</small>
+            <small>Logged in as: @userName</small>
+        </div>
+    </footer>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

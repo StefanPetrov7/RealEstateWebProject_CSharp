@@ -11,6 +11,7 @@ using RealEstateApp.Data.Models;
 using RealEstateApp.Web.Infrastructure;
 using RealEstateApp.Web.Infrastructure.Extensions;
 using System.Security.Principal;
+using Microsoft.AspNetCore.Mvc;
 
 namespace RealEstateApp.Web
 {
@@ -40,7 +41,7 @@ namespace RealEstateApp.Web
                 .AddRoles<IdentityRole<Guid>>()
                 .AddSignInManager<SignInManager<ApplicationUser>>()
                 .AddUserManager<UserManager<ApplicationUser>>()
-                .AddDefaultUI()
+                //.AddDefaultUI()
                 .AddDefaultTokenProviders();
 
             builder.Services.ConfigureApplicationCookie(cfg =>
@@ -69,6 +70,11 @@ namespace RealEstateApp.Web
             // Below extension method register all the above services!
 
             builder.Services.RegisterUserServices(typeof(FavoriteService).Assembly);
+
+
+            // Attribute added to the Web App Controllers only, not to the Web API Controllers 
+            // Used for the [AutoValidateAntiforgeryToken] attribute. 
+            builder.Services.AddControllersWithViews();
 
             WebApplication app = builder.Build();
 
@@ -125,7 +131,6 @@ namespace RealEstateApp.Web
             cfg.SignIn.RequireConfirmedPhoneNumber = builder.Configuration.GetValue<bool>("Identity:SignIn:RequireConfirmedPhoneNumber");
 
             cfg.User.RequireUniqueEmail = builder.Configuration.GetValue<bool>("Identity:User:RequireUniqueEmail");
-
         }
     }
 }

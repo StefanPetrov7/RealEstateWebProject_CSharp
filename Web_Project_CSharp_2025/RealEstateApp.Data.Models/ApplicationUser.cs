@@ -13,6 +13,8 @@ namespace RealEstateApp.Data.Models
             this.Favorites = new HashSet<Favorite>();  
         }
 
+        public bool IsDeleted { get; set; } = false;
+
         [InverseProperty(nameof(Favorite.User))]
         public virtual ICollection<Favorite> Favorites { get; set; }
 

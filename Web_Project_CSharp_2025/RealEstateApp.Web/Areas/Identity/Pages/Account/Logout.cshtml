@@ -1,5 +1,5 @@
 ﻿@page
-@model LogoutModel
+@model RealEstateApp.Web.Areas.Identity.Pages.Account.LogoutModel
 @{
     ViewData["Title"] = "Log out";
 }
@@ -12,10 +12,7 @@
             <div class="card-body">
                 @if (User.Identity?.IsAuthenticated ?? false)
                 {
-                    <form asp-area="Identity"
-                          asp-page="/Account/Logout"
-                          asp-route-returnUrl="@Url.Page("/", new { area = "" })"
-                          method="post">
+                    <form asp-page="/Account/Logout" method="post">
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg">Logout</button>
                         </div>
@@ -30,5 +27,3 @@
     </div>
 </div>
 
-
-@* None of Login / Logout / Register View are loading  *@

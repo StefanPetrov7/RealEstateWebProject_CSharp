@@ -16,17 +16,16 @@ namespace RealEstateApp.Data.DataServices
         private readonly IRepository<Property, Guid> propertyRepository;
         private readonly IRepository<PropertyFavorite, Guid> propFavRepository;
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly IValidationService validationService;
+
+
         public FavoriteService(
             IRepository<Favorite, Guid> favRepo,
             UserManager<ApplicationUser> userManager,
-            IValidationService validationService,
             IRepository<Property, Guid> propRepo,
             IRepository<PropertyFavorite, Guid> propFavRepository)
         {
             this.favoriteRepository = favRepo;
             this.userManager = userManager;
-            this.validationService = validationService;
             this.propertyRepository = propRepo;
             this.propFavRepository = propFavRepository;
         }
@@ -46,7 +45,9 @@ namespace RealEstateApp.Data.DataServices
         public async Task<IEnumerable<FavoriteView>> IndexGetAllFavoritesAsync(string userId)
         {
             IEnumerable<FavoriteView> favoriteViewModels = await this.favoriteRepository.GetAllAttached()
-                 .Where(x => x.UserId.ToString().ToLower() == userId.ToLower())
+                 .Where(x => x.UserId.ToString().ToLower() == userId.ToLower()
+                 && x.IsDeleted == false
+                 && x.User.IsDeleted == false)
                  .Select(x => new FavoriteView()
                  {
                      Id = x.Id.ToString(),
@@ -127,14 +128,13 @@ namespace RealEstateApp.Data.DataServices
         {
             FavoritePropertyViewModel? favoriteProperty = await this.favoriteRepository
                 .GetAllAttached()
-                .Where(x => x.Id == favoriteId)
+                .Where(x => x.Id == favoriteId && x.IsDeleted == false && x.User.IsDeleted == false)
                 .Select(x => new FavoritePropertyViewModel
                 {
                     Id = x.Id,
                     Name = x.Name,
                     Properties = x.FavoriteProperties!
-                    .Where
-                    (x => x.IsDeleted == false)
+                    .Where(x => x.IsDeleted == false)
                     .Select(x => new PropertyViewModel
                     {
                         Id = x.PropertyId.ToString(),

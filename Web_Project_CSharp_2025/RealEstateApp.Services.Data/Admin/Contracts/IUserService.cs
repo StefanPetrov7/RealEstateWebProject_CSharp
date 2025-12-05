@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RealEstateApp.Web.ViewModels.Admin.Users;
 
 namespace RealEstateApp.Services.Data.Admin.Contracts
 {
     public interface IUserService
     {
+        Task<IEnumerable<UserManagementIndexViewModel>> GetAllUsersAsync(string userId);
+
+        Task<bool> SoftDeleteUser(string userId);
+
+        Task<bool> Restore(string userId);
+
     }
 }
