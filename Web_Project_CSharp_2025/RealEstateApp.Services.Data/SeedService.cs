@@ -20,7 +20,7 @@ namespace RealEstateApp.Data.DataServices
         private readonly IConfiguration configuration;
 
         private readonly string propertyAppartementsString = "D:\\Git\\RealEstateWebProject_CSharp\\Web_Project_CSharp_2025\\RealEstateApp.Data\\JsonImportData\\imot.bg-raw-data-2021-03-18.json";
-        private readonly string[] DefaultRoles = new string[] { AppConstants.AdminRoleName, AppConstants.UserRoleName };
+        private readonly string[] DefaultRoles = new string[] { AppConstants.AdminRoleName, AppConstants.UserRoleName, AppConstants.GoldUserRoleName, AppConstants.PlatinumUserRoleName };
 
         public SeedService(
             IPropertyService propService,

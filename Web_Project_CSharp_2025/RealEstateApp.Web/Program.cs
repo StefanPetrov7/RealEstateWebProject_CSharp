@@ -12,6 +12,7 @@ using RealEstateApp.Web.Infrastructure;
 using RealEstateApp.Web.Infrastructure.Extensions;
 using System.Security.Principal;
 using Microsoft.AspNetCore.Mvc;
+using RealEstateApp.Web.Areas.Identity.Infrastructure;
 
 namespace RealEstateApp.Web
 {
@@ -39,9 +40,7 @@ namespace RealEstateApp.Web
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddRoles<IdentityRole<Guid>>()
-                .AddSignInManager<SignInManager<ApplicationUser>>()
                 .AddUserManager<UserManager<ApplicationUser>>()
-                //.AddDefaultUI()
                 .AddDefaultTokenProviders();
 
             builder.Services.ConfigureApplicationCookie(cfg =>
@@ -70,6 +69,9 @@ namespace RealEstateApp.Web
             // Below extension method register all the above services!
 
             builder.Services.RegisterUserServices(typeof(FavoriteService).Assembly);
+
+            // Below service is adding my custom sign in manager to avoid log in on users which have been deleted by the admin. 
+            builder.Services.AddScoped<SignInManager<ApplicationUser>, CustomSignInManager>();
 
 
             // Attribute added to the Web App Controllers only, not to the Web API Controllers 

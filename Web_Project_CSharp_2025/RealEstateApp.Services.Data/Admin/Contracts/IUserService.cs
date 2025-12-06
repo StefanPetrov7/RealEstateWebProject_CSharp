@@ -10,5 +10,7 @@ namespace RealEstateApp.Services.Data.Admin.Contracts
 
         Task<bool> Restore(string userId);
 
+        Task<bool> AssignRoleAsync(string userId, string roleId);
+
     }
 }

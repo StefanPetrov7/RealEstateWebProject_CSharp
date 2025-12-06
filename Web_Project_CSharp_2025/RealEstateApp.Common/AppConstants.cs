@@ -7,6 +7,8 @@
         public const string IsDeletedPropertyName = "IsDeleted";
 
         public const string UserRoleName = "User";
+        public const string GoldUserRoleName = "Gold User";
+        public const string PlatinumUserRoleName = "Platinum User";
         public const string AdminRoleName = "Admin";
         public const string AdminAreaName = "Admin";
 

@@ -32,7 +32,19 @@
                     <td>@user.Id</td>
                     <td>@user.UserName</td>
                     <td>@user.Email</td>
-                    <td>@string.Join(", ", user.Roles)</td>
+                    <td>
+                        @if (user.Roles.Any())
+                        {
+                            foreach (var role in user.Roles)
+                            {
+                                <span class="badge bg-secondary me-1">@role</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted">No roles assigned</span>
+                        }
+                    </td>
                     <td class="text-end">
                         <a asp-area="Admin" asp-controller="ManageUsers" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-primary">
                             <i class="bi bi-pencil-square"></i> Edit

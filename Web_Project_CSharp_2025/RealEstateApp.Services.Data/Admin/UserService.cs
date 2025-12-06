@@ -13,12 +13,18 @@ namespace RealEstateApp.Services.Data.Admin
     public class UserService : IUserService
     {
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole<Guid>> roleManager;
         private readonly IValidationService validationService;
 
-        public UserService(UserManager<ApplicationUser> userManager, IValidationService validationService)
+        public UserService(
+            UserManager<ApplicationUser> userManager,
+            IValidationService validationService,
+            RoleManager<IdentityRole<Guid>> roleManager
+            )
         {
             this.userManager = userManager;
             this.validationService = validationService;
+            this.roleManager = roleManager;
         }
 
         public async Task<IEnumerable<UserManagementIndexViewModel>> GetAllUsersAsync(string userId)
@@ -45,7 +51,7 @@ namespace RealEstateApp.Services.Data.Admin
                     Id = user.Id.ToString(),
                     UserName = user.UserName,
                     Email = user.Email,
-                    IsDeleted = user.IsDeleted, 
+                    IsDeleted = user.IsDeleted,
                     Roles = roles,
                 };
 
@@ -69,7 +75,7 @@ namespace RealEstateApp.Services.Data.Admin
 
             if (userToDelete == null)
             {
-                return false;   
+                return false;
             }
 
             userToDelete.IsDeleted = true;
@@ -94,12 +100,39 @@ namespace RealEstateApp.Services.Data.Admin
 
             if (UserToRestore == null)
             {
-                return false; 
+                return false;
             }
 
             UserToRestore.IsDeleted = false;
 
             var result = await userManager.UpdateAsync(UserToRestore);
+
+            return result.Succeeded;
+
+        }
+
+        public async Task<bool> AssignRoleAsync(string userId, string roleId)
+        {
+            bool isValidUser = this.validationService.IsValidGuid(userId, out Guid userToAssignRoleId);
+            bool isValidRole = this.validationService.IsValidGuid(roleId, out Guid roleToBeAssignedId);
+
+            if (isValidUser == false || isValidRole == false)
+            {
+                return false;
+            }
+
+            var user = await this.userManager.FindByIdAsync(userToAssignRoleId.ToString());
+            var role = await this.roleManager.FindByIdAsync(roleToBeAssignedId.ToString());
+
+            if (user == null || role == null)
+            {
+                return false;
+            }
+
+            var currentRoles = await this.userManager.GetRolesAsync(user);
+            await this.userManager.RemoveFromRolesAsync(user, currentRoles);
+
+            var result = await this.userManager.AddToRoleAsync(user, role.Name);
 
             return result.Succeeded;
 

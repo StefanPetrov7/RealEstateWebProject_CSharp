@@ -1,0 +1,54 @@
+﻿@model RealEstateApp.Web.ViewModels.Admin.Users.EditUserRolesViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Edit User Roles";
+    var roleOptions = ViewData["RoleOptions"] as List<SelectListItem>;
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Edit User Roles</h2>
+
+    <form asp-action="Edit" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input asp-for="Email" class="form-control" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Current Roles</label>
+            @if (Model.CurrentRoles.Any())
+            {
+                foreach (var role in Model.CurrentRoles)
+                {
+                    <span class="badge bg-secondary me-1">@role</span>
+                }
+            }
+            else
+            {
+                <span class="text-muted">No roles assigned</span>
+            }
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Assign New Role</label>
+            <select asp-for="SelectedRoleId" asp-items="roleOptions" class="form-select">
+                <option value="">-- Select a role --</option>
+            </select>
+            <span asp-validation-for="SelectedRoleId" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
