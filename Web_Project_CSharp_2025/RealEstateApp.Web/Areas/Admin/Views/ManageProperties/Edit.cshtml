@@ -1,0 +1,81 @@
+﻿@model RealEstateApp.Web.ViewModels.Property.PropertyViewModel
+
+@{
+    ViewData["Title"] = "Edit Property";
+}
+
+<h2>Edit Property</h2>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="Size"></label>
+        <input asp-for="Size" class="form-control" />
+        <span asp-validation-for="Size" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Year"></label>
+        <input asp-for="Year" class="form-control" />
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Price"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Floor"></label>
+        <input asp-for="Floor" class="form-control" />
+        <span asp-validation-for="Floor" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TotalFloors"></label>
+        <input asp-for="TotalFloors" class="form-control" />
+        <span asp-validation-for="TotalFloors" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="YardSize"></label>
+        <input asp-for="YardSize" class="form-control" />
+        <span asp-validation-for="YardSize" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImageUrl"></label>
+        <input asp-for="ImageUrl" class="form-control" />
+        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DistrictName"></label>
+        <input asp-for="DistrictName" class="form-control" />
+        <span asp-validation-for="DistrictName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="BuildingType"></label>
+        <input asp-for="BuildingType" class="form-control" />
+        <span asp-validation-for="BuildingType" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

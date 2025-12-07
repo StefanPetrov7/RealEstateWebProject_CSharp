@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using RealEstateApp.Data.DataServices.Contracts;
 using RealEstateApp.Data.Models;
 using RealEstateApp.Data.Repository.Contracts;
 using RealEstateApp.Web.ViewModels.Property;
+using System.Runtime;
 using static RealEstateApp.Common.AppConstants;
 
 namespace RealEstateApp.Data.DataServices
@@ -13,13 +15,23 @@ namespace RealEstateApp.Data.DataServices
         private readonly IRepository<District, Guid> districtRepository;
         private readonly IRepository<BuildingType, Guid> buildingTypeRepository;
         private readonly IRepository<PropertyType, Guid> propertyTypeRepository;
+        private readonly IValidationService validationService;
 
-        public PropertyService(ApplicationDbContext dbContext, IRepository<Property, Guid> propRepo, IRepository<District, Guid> distRepo, IRepository<BuildingType, Guid> buildTypeRepo, IRepository<PropertyType, Guid> propTypeRepo)
+        public PropertyService
+            (
+            ApplicationDbContext dbContext,
+            IRepository<Property, Guid> propRepo,
+            IRepository<District, Guid> distRepo,
+            IRepository<BuildingType, Guid> buildTypeRepo,
+            IRepository<PropertyType, Guid> propTypeRepo,
+            IValidationService validationService
+            )
         {
             this.propertyRepository = propRepo;
             this.districtRepository = distRepo;
             this.buildingTypeRepository = buildTypeRepo;
             this.propertyTypeRepository = propTypeRepo;
+            this.validationService = validationService;
         }
 
         public async Task<bool> HasPropertyBeenAdded()
@@ -117,6 +129,47 @@ namespace RealEstateApp.Data.DataServices
                     .ToArrayAsync();
 
             return allProperties;
+        }
+
+        public async Task<bool> UpdatePropertyAsync(PropertyViewModel model)
+        {
+            bool isValidId = this.validationService.IsValidGuid(model.Id, out Guid propertyId);
+
+            if (isValidId == false)
+            {
+                return false;
+            }
+
+            var property = await this.propertyRepository.GetByIdAsync(propertyId);
+
+            if (property == null)
+            {
+                return false;
+            }
+
+            property.Size = model.Size;
+            property.Year = model.Year <= 1800 ? null : model.Year;
+            property.Price = model.Price <= 0 ? null : model.Price;
+            property.Floor = model.Floor.HasValue && model.Floor > 0 ? model.Floor : null;
+            property.TotalFloors = model.TotalFloors.HasValue && model.TotalFloors > 0 ? model.TotalFloors : null;
+            property.YardSize = model.YardSize;
+            property.ImageUrl = string.IsNullOrEmpty(model.ImageUrl) ? property.ImageUrl : model.ImageUrl;
+
+            string districtName = model.DistrictName?.Trim();
+            string propertyTypeName = model.Name?.Trim();
+            string buildingTypeName = model.BuildingType?.Trim();
+
+            var dbDistrict = await this.districtRepository.FirstOrDefaultAsync(x => x.Name.ToLower() == districtName.ToLower());
+            property.District = dbDistrict ?? new District { Name = districtName };
+
+            var dbPropertyType = await this.propertyTypeRepository.FirstOrDefaultAsync(x => x.Name.ToLower() == propertyTypeName.ToLower());
+            property.PropertyType = dbPropertyType ?? new PropertyType { Name = propertyTypeName };
+
+            var dbBuildingType = await this.buildingTypeRepository.FirstOrDefaultAsync(x => x.Name.ToLower() == buildingTypeName.ToLower());
+            property.BuildingType = dbBuildingType ?? new BuildingType { Name = buildingTypeName };
+
+            return await this.propertyRepository.UpdateAsync(property);
+
         }
     }
 }

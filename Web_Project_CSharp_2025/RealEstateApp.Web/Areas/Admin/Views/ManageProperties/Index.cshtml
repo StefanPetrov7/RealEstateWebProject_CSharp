@@ -1,0 +1,50 @@
+﻿@model IEnumerable<RealEstateApp.Web.ViewModels.Property.PropertyViewModel>
+
+<div class="container mt-4">
+    <h2 class="mb-4">Manage Properties</h2>
+
+    <div class="mb-3">
+        <a asp-area="Admin" asp-controller="ManageProperties" asp-action="Create" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Add Property
+        </a>
+    </div>
+
+    <table class="table table-striped table-hover shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Building Type</th>
+                <th>District</th>
+                <th>Size</th>
+                <th>Price</th>
+                <th>Year</th>
+                <th>Date Added</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var property in Model)
+            {
+                <tr>
+                    <td>@property.Name</td>
+                    <td>@property.BuildingType</td>
+                    <td>@property.DistrictName</td>
+                    <td>@property.Size m²</td>
+                    <td>@property.Price?.ToString("C")</td>
+                    <td>@property.Year</td>
+                    <td>@property.DateAdded.ToShortDateString()</td>
+                    <td class="text-end">
+                        <a asp-action="Edit" asp-route-id="@property.Id" class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <form asp-action="Delete" asp-route-id="@property.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
