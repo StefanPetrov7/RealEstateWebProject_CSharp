@@ -113,6 +113,48 @@ namespace RealEstateApp.Web.Areas.Admin.Controllers
 
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SoftDelete(string id) 
+        {
+            bool isValidId = this.validationService.IsValidGuid(id, out Guid propertyId);
+
+            if (isValidId == false)
+            {
+                return BadRequest();
+            }
+
+            bool success = await this.propertyService.SoftDeletePropertyAsync(propertyId);
+
+            if (success == false) 
+            {
+                return BadRequest();
+            }
+
+            return this.RedirectToAction(nameof(Index));    
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Restore(string id)
+        {
+            bool isValidId = this.validationService.IsValidGuid(id, out Guid propertyId);
+
+            if (isValidId == false)
+            {
+                return BadRequest();
+            }
+
+            bool success = await this.propertyService.RestorePropertyAsync(propertyId);
+
+            if (success == false)
+            {
+                return BadRequest();
+            }
+
+            return this.RedirectToAction(nameof(Index));
+        }
+
 
 
 

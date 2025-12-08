@@ -18,13 +18,13 @@ namespace RealEstateApp.Data.Models
         [Required]
         public int Size { get; set; }
 
-     
+
         public int? YardSize { get; set; }
 
-  
+
         public byte? Floor { get; set; }
 
-      
+
         public byte? TotalFloors { get; set; }
 
         public DateTime DateAdded { get; set; }
@@ -34,6 +34,8 @@ namespace RealEstateApp.Data.Models
         public int? Price { get; set; }
 
         public string? ImageUrl { get; set; } = null!;
+
+        public bool IsDeleted { get; set; } = false;
 
         [Required]
         public Guid DistrictId { get; set; }

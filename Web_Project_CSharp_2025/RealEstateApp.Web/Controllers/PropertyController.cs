@@ -32,7 +32,7 @@ namespace RealEstateApp.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            IEnumerable<PropertyViewModel> allProperties = await propertyService.IndexGetAllPropertiesAsync();
+            IEnumerable<PropertyViewModel> allProperties = await propertyService.IndexGetAllActivePropertiesAsync();
             return View(allProperties);
         }
 

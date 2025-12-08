@@ -18,6 +18,8 @@ namespace RealEstateApp.Data.Configuration
                 .IsRequired(false)
                 .HasMaxLength(PropertyImageUrlMaxLength)
                 .HasDefaultValue(PropertyDefaultImageUrl);
+
+            builder.HasQueryFilter(x => x.IsDeleted == false);
         }
     }
 }

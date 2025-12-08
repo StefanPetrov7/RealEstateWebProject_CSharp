@@ -24,6 +24,8 @@
 
         public string? ImageUrl { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         public DateTime DateAdded { get; set; }
 
     }

@@ -26,7 +26,13 @@
             @foreach (var property in Model)
             {
                 <tr>
-                    <td>@property.Name</td>
+                    <td>
+                        @property.Name
+                        @if (property.IsDeleted)
+                        {
+                            <span class="badge bg-danger ms-2">Deleted</span>
+                        }
+                    </td>
                     <td>@property.BuildingType</td>
                     <td>@property.DistrictName</td>
                     <td>@property.Size m²</td>
@@ -37,11 +43,27 @@
                         <a asp-action="Edit" asp-route-id="@property.Id" class="btn btn-sm btn-primary">
                             <i class="bi bi-pencil-square"></i> Edit
                         </a>
-                        <form asp-action="Delete" asp-route-id="@property.Id" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-danger">
-                                <i class="bi bi-trash"></i> Delete
-                            </button>
-                        </form>
+
+                        @if (property.IsDeleted)
+                        {
+                            <form asp-action="Restore" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@property.Id" />
+                                <button type="submit" class="btn btn-success btn-sm" title="Restore this property">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Restore
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="SoftDelete" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@property.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Are you sure you want to delete this property?');"
+                                        title="Soft delete this property">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </form>
+                        }
                     </td>
                 </tr>
             }

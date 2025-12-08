@@ -4,7 +4,7 @@ using RealEstateApp.Web.ViewModels.Property;
 
 namespace RealEstateApp.Data.DataServices.Contracts
 {
-    public interface IPropertyService 
+    public interface IPropertyService
     {
         Task AddPropertyAsync(string district, byte? floor, byte? totalFloor, int size, int? yardSize, int? year, string propertyType, string buildingType, int? price, string imageUrl = null);
 
@@ -14,6 +14,13 @@ namespace RealEstateApp.Data.DataServices.Contracts
 
         Task<IEnumerable<PropertyViewModel>> IndexGetAllPropertiesAsync();
 
+        Task<IEnumerable<PropertyViewModel>> IndexGetAllActivePropertiesAsync();
+
         Task<bool> UpdatePropertyAsync(PropertyViewModel property);
+
+        Task<bool> SoftDeletePropertyAsync(Guid id);
+
+        Task<bool> RestorePropertyAsync(Guid id);
+
     }
 }

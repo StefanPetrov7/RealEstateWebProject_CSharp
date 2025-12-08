@@ -113,6 +113,29 @@ namespace RealEstateApp.Data.DataServices
         public async Task<IEnumerable<PropertyViewModel>> IndexGetAllPropertiesAsync()
         {
             IEnumerable<PropertyViewModel> allProperties = await propertyRepository.GetAllAttached()
+                .IgnoreQueryFilters()
+                   .Select(x => new PropertyViewModel
+                   {
+                       Id = x.Id.ToString(),
+                       Name = x.PropertyType!.Name,
+                       BuildingType = x.BuildingType!.Name,
+                       DistrictName = x.District!.Name,
+                       Floor = x.Floor,
+                       Price = x.Price,
+                       Size = x.Size,
+                       Year = x.Year,
+                       DateAdded = x.DateAdded,
+                       ImageUrl = x.ImageUrl,
+                       IsDeleted = x.IsDeleted,
+                   })
+                    .ToArrayAsync();
+
+            return allProperties;
+        }
+
+        public async Task<IEnumerable<PropertyViewModel>> IndexGetAllActivePropertiesAsync()
+        {
+            IEnumerable<PropertyViewModel> allProperties = await propertyRepository.GetAllAttached()
                    .Select(x => new PropertyViewModel
                    {
                        Id = x.Id.ToString(),
@@ -170,6 +193,38 @@ namespace RealEstateApp.Data.DataServices
 
             return await this.propertyRepository.UpdateAsync(property);
 
+        }
+
+        public async Task<bool> SoftDeletePropertyAsync(Guid propertyId)
+        {
+            var property = await this.propertyRepository.GetAllAttached()
+                .IgnoreQueryFilters()
+                .FirstOrDefaultAsync(x => x.Id == propertyId);
+
+            if (property == null)
+            {
+                return false;
+            }
+
+            property.IsDeleted = true;
+
+            return await this.propertyRepository.UpdateAsync(property);
+        }
+
+        public async Task<bool> RestorePropertyAsync(Guid propertyId)
+        {
+            var property = await this.propertyRepository.GetAllAttached()
+             .IgnoreQueryFilters()
+             .FirstOrDefaultAsync(x => x.Id == propertyId);
+
+            if (property == null)
+            {
+                return false;
+            }
+
+            property.IsDeleted = false;
+
+            return await this.propertyRepository.UpdateAsync(property);
         }
     }
 }
