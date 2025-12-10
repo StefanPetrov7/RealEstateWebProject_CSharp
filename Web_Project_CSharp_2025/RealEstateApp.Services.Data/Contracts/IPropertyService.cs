@@ -1,5 +1,6 @@
 ﻿
 
+using RealEstateApp.Web.ViewModels.Admin.Reports;
 using RealEstateApp.Web.ViewModels.Property;
 
 namespace RealEstateApp.Data.DataServices.Contracts
@@ -21,6 +22,10 @@ namespace RealEstateApp.Data.DataServices.Contracts
         Task<bool> SoftDeletePropertyAsync(Guid id);
 
         Task<bool> RestorePropertyAsync(Guid id);
+
+        Task<PropertyReportViewModel> GetPropertyStatusReportAsync();
+
+        Task<IEnumerable<PropertyTrendReportViewModel>> GetPropertyTrendReportAsync();
 
     }
 }

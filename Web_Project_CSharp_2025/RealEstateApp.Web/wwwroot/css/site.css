@@ -236,3 +236,10 @@ main {
         background-color: #0d9488 !important; /* darker teal on hover */
         border-color: #0d9488 !important;
     }
+
+/* Force black text for the Total row in reports table */
+.table tfoot tr td {
+    color: #000 !important; /* solid black text */
+    font-weight: bold; /* keep it bold */
+    background-color: #f8f9fa; /* optional: light gray background for contrast */
+}

@@ -3,6 +3,7 @@ using Microsoft.Identity.Client;
 using RealEstateApp.Data.DataServices.Contracts;
 using RealEstateApp.Data.Models;
 using RealEstateApp.Data.Repository.Contracts;
+using RealEstateApp.Web.ViewModels.Admin.Reports;
 using RealEstateApp.Web.ViewModels.Property;
 using System.Runtime;
 using static RealEstateApp.Common.AppConstants;
@@ -225,6 +226,40 @@ namespace RealEstateApp.Data.DataServices
             property.IsDeleted = false;
 
             return await this.propertyRepository.UpdateAsync(property);
+        }
+
+        public async Task<PropertyReportViewModel> GetPropertyStatusReportAsync()
+        {
+            int activeProperties = await this.propertyRepository.GetAllAttached().CountAsync(x => x.IsDeleted == false);
+
+            int deletedProperties = await this.propertyRepository.GetAllAttached().IgnoreQueryFilters().CountAsync(x => x.IsDeleted == true);
+
+            PropertyReportViewModel report = new PropertyReportViewModel
+            {
+                ActiveCount = activeProperties,
+                DeletedCount = deletedProperties
+            };
+
+            return report;
+        }
+
+        public async Task<IEnumerable<PropertyTrendReportViewModel>> GetPropertyTrendReportAsync()
+        {
+            IEnumerable<PropertyTrendReportViewModel> trend = await this.propertyRepository.GetAllAttached()
+                 .IgnoreQueryFilters()
+                 .GroupBy(x => new { x.DateAdded.Year, x.DateAdded.Month })
+                 .Select(x => new PropertyTrendReportViewModel
+                 {
+                     Year = x.Key.Year,
+                     Month = x.Key.Month,
+                     AddedCount = x.Count(x => x.IsDeleted == false),
+                     DeletedCount = x.Count(x => x.IsDeleted == true)
+                 })
+                 .OrderBy(x => x.Year)
+                 .ThenBy(x => x.Month)
+                 .ToListAsync();
+
+            return trend;
         }
     }
 }
